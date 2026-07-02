@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Quiniela · Octavos Mundial 2026</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230b3d2e' stroke='%23ffd447' stroke-width='6'/%3E%3Ctext x='50' y='57' font-size='58' text-anchor='middle' dominant-baseline='middle'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -133,7 +134,6 @@
     <p class="reglas">
       <b>3 puntos</b> por atinarle al resultado (gana local, empate a los 90&#8202;', o gana visitante).
       El <b>marcador exacto</b> cuenta aparte: cada acierto suma 1 ⭐ y sirve de <b>desempate</b>.
-      Un solo resultado por partido. Marcadores a los 90 minutos.
     </p>
   </header>
 
@@ -161,9 +161,14 @@
     <button class="btn" onclick="document.getElementById('file-imp').click()">Cargar respaldo</button>
     <input type="file" id="file-imp" accept=".json" style="display:none" onchange="importar(event)">
   </div>
-  <p class="nota">Leyenda: pick <b>1</b> = gana el de la izquierda, <b>X</b> = empate, <b>2</b> = gana el de la derecha.
-     Cuando hay resultado real, el pick correcto se pinta <span style="color:var(--verde-ok)">verde</span> (+3) y el
-     marcador exacto se pinta <span style="color:var(--oro)">dorado</span> (⭐).</p>
+  <p class="nota"><b>¿Cómo funciona?</b> En cada partido eliges tu pronóstico con uno de estos tres botones:<br>
+     <b>1</b> → crees que gana el equipo de la <b>izquierda</b>.<br>
+     <b>X</b> → crees que el partido termina en <b>empate</b>.<br>
+     <b>2</b> → crees que gana el equipo de la <b>derecha</b>.<br><br>
+     También puedes escribir el marcador exacto que crees (los goles de cada equipo).<br><br>
+     Cuando se captura el resultado real del partido:<br>
+     · Si le atinaste al ganador (o al empate), tu casilla se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+3 puntos</b>.<br>
+     · Si además le atinaste al marcador exacto, tus goles se pintan <span style="color:var(--oro)"><b>dorado</b></span> y ganas una <b>⭐</b> (sirve para desempatar).</p>
   <p class="aviso-storage" id="aviso-storage">⚠ En esta vista previa los datos no se guardan al recargar. Descarga
      el archivo y ábrelo en tu navegador o súbelo a GitHub Pages para que todo se guarde solo (y usa los respaldos JSON).</p>
 </div>
