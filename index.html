@@ -81,14 +81,17 @@
   /* ---------- matriz de pronósticos ---------- */
   .scroll{ overflow-x:auto; border:2px solid var(--cal); border-radius:10px; background:var(--pizarra); }
   table.matriz{ border-collapse:collapse; min-width:900px; width:100% }
-  .matriz th, .matriz td{ border-bottom:1px solid rgba(242,247,244,.1); border-right:1px solid rgba(242,247,244,.08);
+  .matriz th, .matriz td{ border-bottom:1.5px solid rgba(242,247,244,.35); border-right:1.5px solid rgba(242,247,244,.3);
                           padding:8px; text-align:center; }
-  .matriz thead th{ font-size:11px; color:var(--cal-dim); font-weight:600; padding:10px 8px }
+  .matriz thead th{ font-size:11px; color:var(--cal-dim); font-weight:600; padding:10px 8px;
+                    border-bottom:2px solid rgba(242,247,244,.55); }
   .matriz thead .mini-b{ font-size:22px; display:block }
   .matriz td:first-child, .matriz th:first-child{
     position:sticky; left:0; background:var(--pizarra); text-align:left; min-width:150px;
-    border-right:1.5px solid var(--linea); z-index:2;
+    border-right:2px solid rgba(242,247,244,.55); z-index:2;
   }
+  .matriz tbody tr:nth-child(even) td{ background:rgba(242,247,244,.045) }
+  .matriz tbody tr:nth-child(even) td:first-child{ background:#0d281e }
   .jug-nom{ font-weight:700; font-size:14px }
   .jug-nom input{ background:transparent; border:none; color:var(--cal); font-family:'Archivo'; font-weight:700;
                   font-size:14px; width:110px }
