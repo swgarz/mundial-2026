@@ -109,6 +109,28 @@
   .mini-marcador .star{ font-size:14px; width:16px }
   .mini-marcador input.exacto{ border-color:var(--oro); color:var(--oro) }
 
+  /* ---------- cierre de pronósticos ---------- */
+  .cierre{ font-size:12.5px; color:var(--oro); margin:-6px 0 12px }
+  .pick:disabled, .mini-marcador input:disabled{ cursor:default }
+
+  /* ---------- esquema / camino a la final ---------- */
+  .scroll-bracket{ overflow-x:auto; padding-bottom:6px }
+  .bracket{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; min-width:1000px; align-items:stretch }
+  .br-col{ display:flex; flex-direction:column; justify-content:space-around; gap:10px }
+  .br-tag{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--cal-dim); text-align:center }
+  .br-match{ background:var(--pizarra); border:1.5px solid var(--linea); border-radius:8px; overflow:hidden }
+  .br-team{ display:flex; align-items:center; gap:7px; padding:7px 9px; width:100%; border:none; background:transparent;
+            color:var(--cal); font-family:'Archivo'; font-weight:600; font-size:12.5px; text-align:left; cursor:pointer }
+  .br-team + .br-team{ border-top:1px solid var(--linea) }
+  .br-team.gano{ background:rgba(255,212,71,.16); color:var(--oro) }
+  .br-team.fuera{ opacity:.45 }
+  .br-team:disabled{ cursor:default }
+  .br-team .bandera-img{ width:26px; height:17px; border-radius:2px; margin:0; flex:none }
+  .br-team .tbd-flag{ width:26px; height:17px; line-height:17px; font-size:11px; margin:0; flex:none }
+  .campeon{ text-align:center; margin-top:8px; font-family:'Anton'; letter-spacing:.05em }
+  .campeon .copa{ font-size:30px; display:block }
+  .campeon .nom-camp{ color:var(--oro); font-size:15px; text-transform:uppercase }
+
   /* ---------- botones ---------- */
   .fila-botones{ display:flex; flex-wrap:wrap; gap:10px; margin-top:14px }
   .btn{ font-family:'Archivo'; font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
@@ -158,6 +180,7 @@
      y toda la tabla se actualizan solitas. El marcador real se captura aquí y los puntos se recalculan al instante.</p>
 
   <h2>Pronósticos</h2>
+  <p class="cierre" id="aviso-cierre"></p>
   <div class="scroll"><table class="matriz">
     <thead><tr id="matriz-head"></tr></thead>
     <tbody id="matriz-body"></tbody>
@@ -176,6 +199,14 @@
      · Si además le atinaste a los goles exactos, se pintan <span style="color:var(--oro)"><b>dorado</b></span> y ganas una <b>⭐</b> (sirve para desempatar).<br><br>
      Cuando terminen de llenar sus pronósticos, presiona <b>💾 Guardar</b>: todo queda guardado en la página
      y cualquiera que la abra verá lo último guardado.</p>
+
+  <h2>El camino a la final</h2>
+  <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
+  <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
+     · Los de <b>octavos</b> avanzan solos con el marcador real capturado arriba. Si el partido terminó empatado,
+       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
+     · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
+       (tócalo de nuevo si te equivocaste).</p>
   <p class="aviso-storage" id="aviso-storage">⚠ En esta vista previa los datos no se guardan al recargar. Descarga
      el archivo y ábrelo en tu navegador o súbelo a GitHub Pages para que todo se guarde solo.</p>
 </div>
@@ -294,6 +325,17 @@ window.addEventListener("beforeunload", e=>{
   if(hayCambios){ e.preventDefault(); e.returnValue = ""; }
 });
 
+/* ============== cierre de pronósticos ============== */
+const CIERRE = new Date("2026-07-04T09:00:00-06:00"); /* sábado 4 de julio 2026, 9:00 AM hora centro de México */
+function cerrado(){ return Date.now() >= CIERRE.getTime(); }
+function renderCierre(){
+  const el = document.getElementById("aviso-cierre");
+  if(!el) return;
+  el.innerHTML = cerrado()
+    ? "🔒 <b>Pronósticos cerrados</b> desde el sábado 4 de julio a las 9:00 AM. Ya no se pueden cambiar — solo falta capturar los resultados reales."
+    : "🔓 Pueden llenar y cambiar pronósticos hasta el <b>sábado 4 de julio a las 9:00 AM</b>. A esa hora se cierran y ya nada se mueve.";
+}
+
 /* ============== cálculo de puntos ============== */
 function resultadoReal(m){
   if(m.rh===null || m.ra===null || m.rh==="" || m.ra==="") return null;
@@ -322,10 +364,72 @@ function bandera(code, mini){
 function nombre(code){ return (EQUIPOS[code]||EQUIPOS.TBD).n; }
 
 function render(){
+  S.avanza = S.avanza || {};
   renderStandings();
   renderPartidos();
   renderMatriz();
+  renderBracket();
+  renderCierre();
   guardar();
+}
+
+/* ============== esquema / camino a la final ============== */
+function ganadorOctavos(m){
+  const rr = resultadoReal(m);
+  if(rr==="1") return m.home==="TBD" ? null : m.home;
+  if(rr==="2") return m.away==="TBD" ? null : m.away;
+  if(rr==="X"){
+    const a = S.avanza[m.id];
+    return (a===m.home || a===m.away) ? a : null;
+  }
+  return null;
+}
+function setAvanza(slot, code){
+  if(!code || code==="TBD" || code==="null") return;
+  S.avanza = S.avanza || {};
+  S.avanza[slot] = (S.avanza[slot]===code) ? null : code; /* volver a tocar lo quita */
+  render();
+}
+function renderBracket(){
+  const validaAvanza = x => {
+    const a = S.avanza[x.id];
+    return (a && (a===x.home || a===x.away)) ? a : null;
+  };
+  const M = S.matches;
+  const w = M.map(ganadorOctavos);
+  const cuartos = [
+    {id:"c1", home:w[0], away:w[1]}, {id:"c2", home:w[2], away:w[3]},
+    {id:"c3", home:w[4], away:w[5]}, {id:"c4", home:w[6], away:w[7]},
+  ];
+  const gc = cuartos.map(validaAvanza);
+  const semis = [ {id:"s1", home:gc[0], away:gc[1]}, {id:"s2", home:gc[2], away:gc[3]} ];
+  const gs = semis.map(validaAvanza);
+  const final = {id:"f1", home:gs[0], away:gs[1]};
+  const campeon = validaAvanza(final);
+
+  const equipoBtn = (slot, code, gan, activo) => {
+    const cls = "br-team" + (gan ? (gan===code ? " gano" : " fuera") : "");
+    const hay = code && code!=="TBD";
+    return `<button class="${cls}" ${activo && hay ? "" : "disabled"} onclick="setAvanza('${slot}','${code}')">
+      ${hay ? bandera(code) : `<span class="bandera-img tbd-flag">?</span>`}
+      <span>${hay ? esc(nombre(code)) : "Por definir"}</span></button>`;
+  };
+  const octCard = m => {
+    const gan = ganadorOctavos(m), esEmpate = resultadoReal(m)==="X";
+    return `<div class="br-match">${equipoBtn(m.id, m.home, gan, esEmpate)}${equipoBtn(m.id, m.away, gan, esEmpate)}</div>`;
+  };
+  const card = (x, gan) =>
+    `<div class="br-match">${equipoBtn(x.id, x.home, gan, true)}${equipoBtn(x.id, x.away, gan, true)}</div>`;
+
+  document.getElementById("bracket").innerHTML = `
+    <div class="br-col"><div class="br-tag">Octavos</div>${M.slice(0,4).map(octCard).join("")}</div>
+    <div class="br-col"><div class="br-tag">Cuartos</div>${card(cuartos[0],gc[0])}${card(cuartos[1],gc[1])}</div>
+    <div class="br-col"><div class="br-tag">Semifinal</div>${card(semis[0],gs[0])}</div>
+    <div class="br-col"><div class="br-tag">Final</div>${card(final,campeon)}
+      <div class="campeon"><span class="copa">🏆</span><span class="nom-camp">${campeon ? esc(nombre(campeon)) : "—"}</span></div></div>
+    <div class="br-col"><div class="br-tag">Semifinal</div>${card(semis[1],gs[1])}</div>
+    <div class="br-col"><div class="br-tag">Cuartos</div>${card(cuartos[2],gc[2])}${card(cuartos[3],gc[3])}</div>
+    <div class="br-col"><div class="br-tag">Octavos</div>${M.slice(4).map(octCard).join("")}</div>`;
 }
 
 function renderStandings(){
@@ -388,6 +492,7 @@ function renderMatriz(){
     `<th><span class="mini-b">${bandera(m.home,true)}${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
   ).join("");
 
+  const lock = cerrado() ? "disabled" : "";
   const body = document.getElementById("matriz-body");
   body.innerHTML = S.players.map(p=>{
     const celdas = S.matches.map(m=>{
@@ -401,15 +506,15 @@ function renderMatriz(){
       const exacto = rr && pk.h!==null && pk.a!==null && pk.h!=="" && pk.a!=="" && +pk.h===+m.rh && +pk.a===+m.ra;
       return `<td><div class="celda">
         <div class="picks" role="group" aria-label="Pronóstico de resultado">
-          <button class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
-          <button class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
-          <button class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
+          <button ${lock} class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
+          <button ${lock} class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
+          <button ${lock} class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
         </div>
         <div class="mini-marcador">
-          <input type="number" min="0" max="99" value="${pk.h??""}" placeholder="–"
+          <input ${lock} type="number" min="0" max="99" value="${pk.h??""}" placeholder="–"
                  class="${exacto?'exacto':''}" onchange="setPickScore('${p.id}','${m.id}','h',this.value)" aria-label="Goles pronosticados local">
           <span>–</span>
-          <input type="number" min="0" max="99" value="${pk.a??""}" placeholder="–"
+          <input ${lock} type="number" min="0" max="99" value="${pk.a??""}" placeholder="–"
                  class="${exacto?'exacto':''}" onchange="setPickScore('${p.id}','${m.id}','a',this.value)" aria-label="Goles pronosticados visitante">
           <span class="star">${exacto?"⭐":""}</span>
         </div>
@@ -432,18 +537,21 @@ function setReal(mid, campo, v){
   render();
 }
 function setPick(pid, mid, v){
+  if(cerrado()) return;
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk.res = (pk.res===v) ? null : v;   /* volver a tocar el mismo lo des-selecciona */
   render();
 }
 function setPickScore(pid, mid, campo, v){
+  if(cerrado()) return;
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
   render();
 }
 function agregarJugador(){
+  if(cerrado()){ alert("Los pronósticos ya están cerrados: no se pueden agregar jugadores."); return; }
   const nom = prompt("Nombre del jugador:");
   if(!nom || !nom.trim()) return;
   S.players.push({id:"p"+Date.now(), name:nom.trim()});
