@@ -60,6 +60,12 @@
   .equipos{ display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:6px }
   .lado{ text-align:center }
   .bandera{ font-size:40px; line-height:1; display:block; }
+  .bandera-img{ display:inline-block; width:60px; height:40px; object-fit:cover; border-radius:5px;
+                box-shadow:0 2px 6px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.15); }
+  .bandera-img.mini{ width:34px; height:23px; border-radius:3px; margin:0 2px 4px; }
+  .tbd-flag{ background:#031510; color:var(--cal-dim); font-family:'Anton'; text-align:center;
+             line-height:40px; font-size:20px; }
+  .tbd-flag.mini{ line-height:23px; font-size:13px; }
   .lado select{ margin-top:4px; width:100%; background:transparent; color:var(--cal); border:none;
                 font-family:'Archivo'; font-weight:600; font-size:13px; text-align:center; cursor:pointer; }
   .lado select option{ color:#111 }
@@ -165,13 +171,13 @@
 <script>
 /* ============== catálogo de equipos con bandera ============== */
 const EQUIPOS = {
-  TBD:{n:"Por definir", f:"🏳️"},
-  MEX:{n:"México", f:"🇲🇽"}, ENG:{n:"Inglaterra", f:"🏴󠁧󠁢󠁥󠁮󠁧󠁿"}, BRA:{n:"Brasil", f:"🇧🇷"}, NOR:{n:"Noruega", f:"🇳🇴"},
-  PAR:{n:"Paraguay", f:"🇵🇾"}, FRA:{n:"Francia", f:"🇫🇷"}, CAN:{n:"Canadá", f:"🇨🇦"}, MAR:{n:"Marruecos", f:"🇲🇦"},
-  POR:{n:"Portugal", f:"🇵🇹"}, CRO:{n:"Croacia", f:"🇭🇷"}, ESP:{n:"España", f:"🇪🇸"}, AUT:{n:"Austria", f:"🇦🇹"},
-  USA:{n:"Estados Unidos", f:"🇺🇸"}, BIH:{n:"Bosnia", f:"🇧🇦"}, BEL:{n:"Bélgica", f:"🇧🇪"}, SEN:{n:"Senegal", f:"🇸🇳"},
-  ARG:{n:"Argentina", f:"🇦🇷"}, CPV:{n:"Cabo Verde", f:"🇨🇻"}, AUS:{n:"Australia", f:"🇦🇺"}, EGY:{n:"Egipto", f:"🇪🇬"},
-  SUI:{n:"Suiza", f:"🇨🇭"}, ALG:{n:"Argelia", f:"🇩🇿"}, COL:{n:"Colombia", f:"🇨🇴"}, GHA:{n:"Ghana", f:"🇬🇭"}
+  TBD:{n:"Por definir", i:null},
+  MEX:{n:"México", i:"mx"}, ENG:{n:"Inglaterra", i:"gb-eng"}, BRA:{n:"Brasil", i:"br"}, NOR:{n:"Noruega", i:"no"},
+  PAR:{n:"Paraguay", i:"py"}, FRA:{n:"Francia", i:"fr"}, CAN:{n:"Canadá", i:"ca"}, MAR:{n:"Marruecos", i:"ma"},
+  POR:{n:"Portugal", i:"pt"}, CRO:{n:"Croacia", i:"hr"}, ESP:{n:"España", i:"es"}, AUT:{n:"Austria", i:"at"},
+  USA:{n:"Estados Unidos", i:"us"}, BIH:{n:"Bosnia", i:"ba"}, BEL:{n:"Bélgica", i:"be"}, SEN:{n:"Senegal", i:"sn"},
+  ARG:{n:"Argentina", i:"ar"}, CPV:{n:"Cabo Verde", i:"cv"}, AUS:{n:"Australia", i:"au"}, EGY:{n:"Egipto", i:"eg"},
+  SUI:{n:"Suiza", i:"ch"}, ALG:{n:"Argelia", i:"dz"}, COL:{n:"Colombia", i:"co"}, GHA:{n:"Ghana", i:"gh"}
 };
 
 /* ============== estado inicial ============== */
@@ -226,7 +232,12 @@ function puntosDe(pid){
 }
 
 /* ============== render ============== */
-function bandera(code){ return (EQUIPOS[code]||EQUIPOS.TBD).f; }
+function bandera(code, mini){
+  const e = EQUIPOS[code]||EQUIPOS.TBD;
+  const cls = mini ? "bandera-img mini" : "bandera-img";
+  if(!e.i) return `<span class="${cls} tbd-flag">?</span>`;
+  return `<img class="${cls}" src="https://flagcdn.com/w160/${e.i}.png" alt="${e.n}" loading="lazy">`;
+}
 function nombre(code){ return (EQUIPOS[code]||EQUIPOS.TBD).n; }
 
 function render(){
@@ -251,7 +262,7 @@ function renderStandings(){
 
 function opcionesEquipo(sel){
   return Object.entries(EQUIPOS).map(([c,e])=>
-    `<option value="${c}" ${c===sel?"selected":""}>${e.f} ${e.n}</option>`).join("");
+    `<option value="${c}" ${c===sel?"selected":""}>${e.n}</option>`).join("");
 }
 
 function renderPartidos(){
@@ -293,7 +304,7 @@ function renderPartidos(){
 function renderMatriz(){
   const head = document.getElementById("matriz-head");
   head.innerHTML = `<th>Jugador</th>` + S.matches.map(m=>
-    `<th><span class="mini-b">${bandera(m.home)}${bandera(m.away)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
+    `<th><span class="mini-b">${bandera(m.home,true)}${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
   ).join("");
 
   const body = document.getElementById("matriz-body");
