@@ -117,6 +117,9 @@
   .btn:hover{ background:var(--cal); color:var(--campo) }
   .btn.solido{ background:var(--oro); border-color:var(--oro); color:#1e1602 }
   .btn.solido:hover{ filter:brightness(1.08) }
+  .btn:disabled{ opacity:.6; cursor:default }
+  .btn.pendiente{ animation:pulso 1.5s infinite }
+  @keyframes pulso{ 50%{ box-shadow:0 0 0 7px rgba(255,212,71,.28) } }
   .nota{ font-size:12px; color:var(--cal-dim); margin-top:10px; line-height:1.5 }
   .aviso-storage{ display:none; margin-top:8px; font-size:12px; color:var(--oro) }
 
@@ -158,7 +161,8 @@
     <tbody id="matriz-body"></tbody>
   </table></div>
   <div class="fila-botones">
-    <button class="btn solido" onclick="agregarJugador()">+ Agregar jugador</button>
+    <button class="btn solido" id="btn-guardar" onclick="guardarNube()">💾 Guardar</button>
+    <button class="btn" onclick="agregarJugador()">+ Agregar jugador</button>
     <button class="btn" onclick="exportar()">Descargar PDF</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
@@ -167,7 +171,9 @@
      · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto).<br><br>
      Cuando el partido se juegue y se capture el resultado real:<br>
      · Si le atinaste al ganador (o al empate), tu botón se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+3 puntos</b>.<br>
-     · Si además le atinaste a los goles exactos, se pintan <span style="color:var(--oro)"><b>dorado</b></span> y ganas una <b>⭐</b> (sirve para desempatar).</p>
+     · Si además le atinaste a los goles exactos, se pintan <span style="color:var(--oro)"><b>dorado</b></span> y ganas una <b>⭐</b> (sirve para desempatar).<br><br>
+     Cuando terminen de llenar sus pronósticos, presiona <b>💾 Guardar</b>: todo queda guardado en la página
+     y cualquiera que la abra verá lo último guardado.</p>
   <p class="aviso-storage" id="aviso-storage">⚠ En esta vista previa los datos no se guardan al recargar. Descarga
      el archivo y ábrelo en tu navegador o súbelo a GitHub Pages para que todo se guarde solo.</p>
 </div>
@@ -213,9 +219,78 @@ try {
   document.addEventListener("DOMContentLoaded", ()=>{ document.getElementById("aviso-storage").style.display="block"; });
 }
 function guardar(){
+  if(!cargando) marcarCambio();
   if(!puedeGuardar) return;
   try { localStorage.setItem(KEY, JSON.stringify(S)); } catch(e){}
 }
+
+/* ============== guardado en la web (archivo datos.json en el repo de GitHub) ============== */
+const REPO = "swgarz/mundial-2026", ARCHIVO = "datos.json";
+let cargando = true;
+let hayCambios = false;
+
+function marcarCambio(){
+  hayCambios = true;
+  const btn = document.getElementById("btn-guardar");
+  if(btn){ btn.textContent = "💾 Guardar cambios"; btn.classList.add("pendiente"); btn.disabled = false; }
+}
+function marcarGuardado(){
+  hayCambios = false;
+  const btn = document.getElementById("btn-guardar");
+  if(btn){ btn.textContent = "✓ Guardado"; btn.classList.remove("pendiente"); btn.disabled = false; }
+}
+
+async function cargarNube(){
+  try{
+    const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${ARCHIVO}?t=${Date.now()}`,
+      {headers:{Accept:"application/vnd.github.raw+json"}, cache:"no-store"});
+    if(!r.ok) return;
+    const d = await r.json();
+    if(d && d.players && d.matches){
+      cargando = true;
+      S = d; render();
+      cargando = false;
+      marcarGuardado();
+    }
+  }catch(e){}
+}
+
+async function guardarNube(){
+  let tk = (localStorage.getItem("gh-token")||"").trim();
+  if(!tk){
+    tk = (prompt("Para guardar en la página se necesita el token de GitHub del organizador.\n\nPégalo aquí (solo se pide una vez en este navegador):")||"").trim();
+    if(!tk) return;
+    localStorage.setItem("gh-token", tk);
+  }
+  const btn = document.getElementById("btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando…";
+  try{
+    const api = `https://api.github.com/repos/${REPO}/contents/${ARCHIVO}`;
+    const h = {Authorization:"Bearer "+tk, Accept:"application/vnd.github+json"};
+    let sha = null;
+    const r0 = await fetch(api+`?t=${Date.now()}`, {headers:h, cache:"no-store"});
+    if(r0.status===200) sha = (await r0.json()).sha;
+    const cuerpo = {
+      message: "Guardar quiniela desde la página",
+      content: btoa(unescape(encodeURIComponent(JSON.stringify(S,null,2))))
+    };
+    if(sha) cuerpo.sha = sha;
+    const r = await fetch(api, {method:"PUT", headers:h, body:JSON.stringify(cuerpo)});
+    if(r.status===401 || r.status===403){
+      localStorage.removeItem("gh-token");
+      throw new Error("Token inválido o sin permisos. Vuelve a presionar Guardar y pega un token válido.");
+    }
+    if(!r.ok) throw new Error("Error "+r.status+" al guardar.");
+    marcarGuardado();
+  }catch(e){
+    alert("No se pudo guardar en la página: " + (e.message||"revisa tu internet") + "");
+    marcarCambio();
+  }
+}
+
+window.addEventListener("beforeunload", e=>{
+  if(hayCambios){ e.preventDefault(); e.returnValue = ""; }
+});
 
 /* ============== cálculo de puntos ============== */
 function resultadoReal(m){
@@ -412,6 +487,8 @@ function exportar(){
 function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
 render();
+cargando = false;
+cargarNube();
 </script>
 </body>
 </html>
