@@ -1,8 +1,24 @@
 {
   "players": [
     {
-      "id": "p1",
-      "name": "Dan"
+      "id": "p1783024145197",
+      "name": "Imelda"
+    },
+    {
+      "id": "p1783025278966",
+      "name": "Franca"
+    },
+    {
+      "id": "p1783025284025",
+      "name": "Paola"
+    },
+    {
+      "id": "p1783025310967",
+      "name": "Caroline"
+    },
+    {
+      "id": "p1783025322972",
+      "name": "Daniel"
     }
   ],
   "matches": [
@@ -79,28 +95,6 @@
       "nota": "SUI/ALG vs COL/GHA"
     }
   ],
-  "picks": {
-    "p1": {
-      "m3": {
-        "res": "1",
-        "h": 2,
-        "a": 1
-      },
-      "m1": {
-        "res": "1",
-        "h": 3,
-        "a": 0
-      },
-      "m2": {
-        "res": null,
-        "h": 1,
-        "a": 2
-      },
-      "m4": {
-        "res": null,
-        "h": 1,
-        "a": 1
-      }
-    }
-  }
+  "picks": {},
+  "avanza": {}
 }
