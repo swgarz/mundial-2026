@@ -63,7 +63,7 @@
   .bandera{ font-size:40px; line-height:1; display:block; }
   .bandera-img{ display:inline-block; width:60px; height:40px; object-fit:cover; border-radius:5px;
                 box-shadow:0 2px 6px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.15); }
-  .bandera-img.mini{ width:34px; height:23px; border-radius:3px; margin:0 2px 4px; }
+  .bandera-img.mini{ width:34px; height:23px; border-radius:3px; margin:0; }
   .tbd-flag{ background:#031510; color:var(--cal-dim); font-family:'Anton'; text-align:center;
              line-height:40px; font-size:20px; }
   .tbd-flag.mini{ line-height:23px; font-size:13px; }
@@ -86,7 +86,11 @@
                           padding:8px; text-align:center; }
   .matriz thead th{ font-size:11px; color:var(--cal-dim); font-weight:600; padding:10px 8px;
                     border-bottom:2px solid rgba(242,247,244,.55); }
-  .matriz thead .mini-b{ font-size:22px; display:block }
+  .matriz thead .mini-b{ display:flex; align-items:center; justify-content:space-evenly; margin-bottom:4px }
+  .mini-vs{ font-style:normal; font-family:'Anton'; font-size:12px; color:var(--cal-dim) }
+  .fav-sel{ margin-top:4px; width:130px; background:transparent; border:none; color:var(--oro);
+            font-family:'Archivo'; font-weight:600; font-size:11.5px; cursor:pointer }
+  .fav-sel option{ color:#111 }
   .matriz td:first-child, .matriz th:first-child{
     position:sticky; left:0; background:var(--pizarra); text-align:left; min-width:150px;
     border-right:2px solid rgba(242,247,244,.55); z-index:2;
@@ -162,8 +166,9 @@
     <div class="eyebrow">Mundial 2026 · La banda</div>
     <h1>Quiniela <span class="thin">Octavos</span></h1>
     <p class="reglas">
-      <b>3 puntos</b> por atinarle al resultado (gana local, empate a los 90&#8202;', o gana visitante).
-      El <b>marcador exacto</b> cuenta aparte: cada acierto suma 1 ⭐ y sirve de <b>desempate</b>.<br>
+      · <b>1 punto</b> por atinarle al ganador del partido (o al empate).<br>
+      · <b>3 puntos</b> si le atinas al <b>marcador exacto</b> (además suma 1 ⭐, que sirve de desempate).<br>
+      · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
       <b>Ojo:</b> todo se califica con el resultado a los <b>90 minutos</b>. Si el partido se va a penales,
       cuenta como <b>empate</b> (ganan los que escogieron EMP) y los penales no dan puntos.<br>
       La apuesta es de <b>$1,000 pesos</b> por jugador.
@@ -197,10 +202,12 @@
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>).<br>
      · Si crees que van a empatar <b>a los 90 minutos</b>, presiona <b>EMP</b> (si luego se define en penales, no importa: cuenta como empate).<br>
-     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto).<br><br>
+     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto).<br>
+     · Junto a tu nombre, elige tu <b>🏆 Favorito</b>: el equipo que crees que será campeón del Mundial.
+       Si gana, sumas <b>+5 puntos</b>.<br><br>
      Cuando el partido se juegue y se capture el resultado real:<br>
-     · Si le atinaste al ganador (o al empate), tu botón se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+3 puntos</b>.<br>
-     · Si además le atinaste a los goles exactos, se pintan <span style="color:var(--oro)"><b>dorado</b></span> y ganas una <b>⭐</b> (sirve para desempatar).<br><br>
+     · Si le atinaste al ganador (o al empate), tu botón se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+1 punto</b>.<br>
+     · Si le atinaste a los goles exactos, ganas <b>3 puntos</b>: se pintan <span style="color:var(--oro)"><b>dorado</b></span> y suman una <b>⭐</b> (sirve para desempatar).<br><br>
      Cuando terminen de llenar sus pronósticos, presiona <b>💾 Guardar</b>: todo queda guardado en la página
      y cualquiera que la abra verá lo último guardado.</p>
 
@@ -346,15 +353,18 @@ function resultadoReal(m){
   const h=+m.rh, a=+m.ra;
   return h>a ? "1" : h<a ? "2" : "X";
 }
-function puntosDe(pid){
+function puntosDe(pid, campeon){
   let pts=0, estrellas=0;
   for(const m of S.matches){
     const rr = resultadoReal(m);
     const pk = (S.picks[pid]||{})[m.id];
     if(!rr || !pk) continue;
-    if(pk.res===rr) pts+=3;
-    if(pk.h!==null && pk.a!==null && pk.h!=="" && pk.a!=="" && +pk.h===+m.rh && +pk.a===+m.ra) estrellas+=1;
+    const exacto = pk.h!==null && pk.a!==null && pk.h!=="" && pk.a!=="" && +pk.h===+m.rh && +pk.a===+m.ra;
+    if(exacto){ pts+=3; estrellas+=1; }
+    else if(pk.res===rr) pts+=1;
   }
+  const p = S.players.find(x=>x.id===pid);
+  if(campeon && p && p.fav===campeon) pts+=5;
   return {pts, estrellas};
 }
 
@@ -394,13 +404,13 @@ function setAvanza(slot, code){
   S.avanza[slot] = (S.avanza[slot]===code) ? null : code; /* volver a tocar lo quita */
   render();
 }
-function renderBracket(){
+function calculaBracket(){
+  S.avanza = S.avanza || {};
   const validaAvanza = x => {
     const a = S.avanza[x.id];
     return (a && (a===x.home || a===x.away)) ? a : null;
   };
-  const M = S.matches;
-  const w = M.map(ganadorOctavos);
+  const w = S.matches.map(ganadorOctavos);
   const cuartos = [
     {id:"c1", home:w[0], away:w[1]}, {id:"c2", home:w[2], away:w[3]},
     {id:"c3", home:w[4], away:w[5]}, {id:"c4", home:w[6], away:w[7]},
@@ -409,7 +419,11 @@ function renderBracket(){
   const semis = [ {id:"s1", home:gc[0], away:gc[1]}, {id:"s2", home:gc[2], away:gc[3]} ];
   const gs = semis.map(validaAvanza);
   const final = {id:"f1", home:gs[0], away:gs[1]};
-  const campeon = validaAvanza(final);
+  return {cuartos, gc, semis, gs, final, campeon: validaAvanza(final)};
+}
+function renderBracket(){
+  const M = S.matches;
+  const {cuartos, gc, semis, gs, final, campeon} = calculaBracket();
 
   const equipoBtn = (slot, code, gan, activo) => {
     const cls = "br-team" + (gan ? (gan===code ? " gano" : " fuera") : "");
@@ -437,13 +451,14 @@ function renderBracket(){
 }
 
 function renderStandings(){
-  const filas = S.players.map(p=>({p, ...puntosDe(p.id)}))
+  const campeon = calculaBracket().campeon;
+  const filas = S.players.map(p=>({p, ...puntosDe(p.id, campeon)}))
     .sort((a,b)=> b.pts-a.pts || b.estrellas-a.estrellas || a.p.name.localeCompare(b.p.name));
   const tb = document.getElementById("standings");
   tb.innerHTML = filas.map((f,i)=>`
     <tr class="${i===0 && (f.pts>0||f.estrellas>0) ? "lider":""}">
       <td class="pos num">${i+1}</td>
-      <td class="nom">${esc(f.p.name)}</td>
+      <td class="nom">${esc(f.p.name)}${f.p.fav ? ` <span class="small" style="color:var(--cal-dim)">🏆 ${esc(nombre(f.p.fav))}</span>` : ""}</td>
       <td class="num oro">${f.pts}</td>
       <td class="num small">${f.estrellas} ⭐</td>
     </tr>`).join("") || `<tr><td colspan="4" style="color:var(--cal-dim)">Agrega jugadores para empezar</td></tr>`;
@@ -497,7 +512,7 @@ function renderPartidos(){
 function renderMatriz(){
   const head = document.getElementById("matriz-head");
   head.innerHTML = `<th>Jugador</th>` + S.matches.map(m=>
-    `<th><span class="mini-b">${bandera(m.home,true)}${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
+    `<th><span class="mini-b">${bandera(m.home,true)}<i class="mini-vs">vs</i>${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
   ).join("");
 
   const lock = cerrado() ? "disabled" : "";
@@ -528,11 +543,18 @@ function renderMatriz(){
         </div>
       </div></td>`;
     }).join("");
+    const opcionesFav = Object.entries(EQUIPOS).filter(([c])=>c!=="TBD")
+      .sort((a,b)=>a[1].n.localeCompare(b[1].n))
+      .map(([c,e])=>`<option value="${c}" ${p.fav===c?"selected":""}>${e.n}</option>`).join("");
     return `<tr>
       <td><div class="jug-nom">
         <input value="${esc(p.name)}" onchange="renombrar('${p.id}',this.value)" aria-label="Nombre del jugador">
         <button class="del-jug" onclick="quitarJugador('${p.id}')" title="Quitar jugador">✕</button>
-      </div></td>${celdas}</tr>`;
+      </div>
+      <select class="fav-sel" ${lock} onchange="setFav('${p.id}',this.value)"
+              title="Tu favorito para campeón del Mundial: +5 puntos si gana">
+        <option value="">🏆 Favorito…</option>${opcionesFav}
+      </select></td>${celdas}</tr>`;
   }).join("") || `<tr><td colspan="${S.matches.length+1}" style="color:var(--cal-dim)">Sin jugadores todavía — dale a "+ Agregar jugador"</td></tr>`;
 }
 
@@ -557,6 +579,11 @@ function setPickScore(pid, mid, campo, v){
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
   render();
+}
+function setFav(pid, code){
+  if(cerrado()) return;
+  const p = S.players.find(x=>x.id===pid);
+  if(p){ p.fav = code || null; render(); }
 }
 function agregarJugador(){
   if(cerrado()){ alert("Los pronósticos ya están cerrados: no se pueden agregar jugadores."); return; }
