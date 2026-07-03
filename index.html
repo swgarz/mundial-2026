@@ -167,13 +167,11 @@
     <div class="eyebrow">Mundial 2026 · La banda</div>
     <h1>Quiniela <span class="thin">Octavos</span></h1>
     <p class="reglas">
-      · <b>1 punto</b> por atinarle al resultado: quién gana el partido, o el <b>empate</b> (EMP).<br>
-      · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>. El empate también cuenta como marcador:
-        si pones <b>0–0</b> o <b>1–1</b> y así termina, también son tus 3 puntos.<br>
+      · <b>1 punto</b> por atinarle al <b>ganador</b> del partido.<br>
+      · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>.<br>
       · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
-      <b>Ojo:</b> todo se califica con el marcador a los <b>90 minutos</b>. Si el partido se va a penales,
-      el resultado que vale es el empate de los 90': suman punto los que escogieron <b>EMP</b> y suman
-      3 los que pusieron el marcador exacto. Los penales no dan ni quitan puntos.<br>
+      <b>Ojo:</b> aquí no hay empates: siempre gana alguien. Si el partido se va a penales,
+      el marcador que se captura es el <b>marcador final de los penales</b>, y con ese se califica todo.<br>
       La apuesta es de <b>$1,000 pesos</b> por jugador.
     </p>
   </header>
@@ -181,8 +179,7 @@
   <h2>FIFA 2026</h2>
   <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
   <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
-     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real. Si el partido terminó empatado,
-       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
+     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real.<br>
      · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
        (tócalo de nuevo si te equivocaste).</p>
 
@@ -207,13 +204,13 @@
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>).<br>
-     · Si crees que van a empatar <b>a los 90 minutos</b>, presiona <b>EMP</b> (si luego se define en penales, no importa: cuenta como empate).<br>
-     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto).<br>
+     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto). Recuerda: no hay
+       empates — si el partido se va a penales, vale el marcador final de los penales.<br>
      · Junto a tu nombre, elige tu <b>🏆 Favorito</b>: el equipo que crees que será campeón del Mundial.
        Si gana, sumas <b>+5 puntos</b>.<br><br>
      Cuando el partido se juegue y se capture el resultado real:<br>
-     · Si le atinaste al ganador (o al empate), tu botón se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+1 punto</b>.<br>
-     · Si le atinaste a los goles exactos (el empate también cuenta: 0–0, 1–1…), ganas <b>3 puntos</b>
+     · Si le atinaste al ganador, tu botón se pinta <span style="color:var(--verde-ok)"><b>verde</b></span> y sumas <b>+1 punto</b>.<br>
+     · Si le atinaste a los goles exactos, ganas <b>3 puntos</b>
        y tus goles se pintan <span style="color:var(--oro)"><b>dorado</b></span>.<br><br>
      Cuando terminen de llenar sus pronósticos, presiona <b>💾 Guardar</b>: todo queda guardado en la página
      y cualquiera que la abra verá lo último guardado.</p>
@@ -247,7 +244,7 @@ const ESTADO_INICIAL = {
     {id:"m7", home:"ARG", away:"EGY", fecha:"Mar 7 jul · Atlanta", rh:null, ra:null, nota:"EGY eliminó a AUS en penales (1-1, 4-2); ARG venció 1-0 a CPV"},
     {id:"m8", home:"SUI", away:"TBD", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"Falta el rival: COL vs GHA (por confirmar)"}
   ],
-  picks:{} /* picks[playerId][matchId] = {res:'1'|'X'|'2'|null, h:null, a:null} */
+  picks:{} /* picks[playerId][matchId] = {res:'1'|'2'|null, h:null, a:null} */
 };
 
 /* ============== persistencia (localStorage con red de seguridad) ============== */
@@ -351,7 +348,8 @@ function renderCierre(){
 function resultadoReal(m){
   if(m.rh===null || m.ra===null || m.rh==="" || m.ra==="") return null;
   const h=+m.rh, a=+m.ra;
-  return h>a ? "1" : h<a ? "2" : "X";
+  /* no hay empates: si se fue a penales, se captura el marcador final de los penales */
+  return h>a ? "1" : h<a ? "2" : null;
 }
 function puntosDe(pid, campeon){
   let pts=0, estrellas=0;
@@ -391,10 +389,6 @@ function ganadorOctavos(m){
   const rr = resultadoReal(m);
   if(rr==="1") return m.home==="TBD" ? null : m.home;
   if(rr==="2") return m.away==="TBD" ? null : m.away;
-  if(rr==="X"){
-    const a = S.avanza[m.id];
-    return (a===m.home || a===m.away) ? a : null;
-  }
   return null;
 }
 function setAvanza(slot, code){
@@ -432,8 +426,8 @@ function renderBracket(){
       <span>${hay ? esc(nombre(code)) : "Por definir"}</span></button>`;
   };
   const octCard = m => {
-    const gan = ganadorOctavos(m), esEmpate = resultadoReal(m)==="X";
-    return `<div class="br-match">${equipoBtn(m.id, m.home, gan, esEmpate)}${equipoBtn(m.id, m.away, gan, esEmpate)}</div>`;
+    const gan = ganadorOctavos(m);
+    return `<div class="br-match">${equipoBtn(m.id, m.home, gan, false)}${equipoBtn(m.id, m.away, gan, false)}</div>`;
   };
   const card = (x, gan) =>
     `<div class="br-match">${equipoBtn(x.id, x.home, gan, true)}${equipoBtn(x.id, x.away, gan, true)}</div>`;
@@ -484,7 +478,6 @@ function renderMatriz(){
       return `<td><div class="celda">
         <div class="picks" role="group" aria-label="Pronóstico de resultado">
           <button ${lock} class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
-          <button ${lock} class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
           <button ${lock} class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
         </div>
         <div class="mini-marcador">
