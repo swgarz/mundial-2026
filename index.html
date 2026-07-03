@@ -22,7 +22,7 @@
   .wrap{max-width:1180px; margin:0 auto; padding:24px 16px 80px}
 
   /* ---------- encabezado tipo marcador ---------- */
-  header{ text-align:center; padding:26px 0 10px; }
+  header{ text-align:left; padding:26px 0 10px; }
   .eyebrow{ letter-spacing:.35em; font-size:12px; color:var(--oro); text-transform:uppercase; }
   h1{ font-family:'Anton',sans-serif; font-size:clamp(38px,7vw,72px); letter-spacing:.02em;
       line-height:1; text-transform:uppercase; text-shadow:0 3px 0 rgba(0,0,0,.35); }
@@ -35,18 +35,18 @@
   h2::after{ content:""; flex:1; height:2px; background:var(--linea); }
 
   /* ---------- tabla de posiciones ---------- */
-  .tabla-pos{ background:var(--pizarra); border:2px solid var(--cal); border-radius:10px; overflow:hidden; }
+  .tabla-pos{ background:var(--pizarra); border:2px solid var(--cal); border-radius:10px; overflow:hidden; max-width:520px; }
   .tabla-pos table{ width:100%; border-collapse:collapse; }
   .tabla-pos th{ font-size:11px; letter-spacing:.18em; text-transform:uppercase; color:var(--cal-dim);
                  padding:10px 14px; text-align:left; border-bottom:1px solid var(--linea); }
-  .tabla-pos td{ padding:10px 14px; border-bottom:1px solid rgba(242,247,244,.08); font-size:15px; }
+  .tabla-pos td{ padding:7px 14px; border-bottom:1px solid rgba(242,247,244,.08); font-size:14px; }
   .tabla-pos tr:last-child td{ border-bottom:none }
   .tabla-pos .pos{ font-family:'Anton'; color:var(--cal-dim); width:44px }
   .tabla-pos .lider .pos, .tabla-pos .lider .nom{ color:var(--oro) }
-  .num{ font-family:'Anton',sans-serif; font-size:22px; letter-spacing:.04em; text-align:right; }
+  .num{ font-family:'Anton',sans-serif; font-size:18px; letter-spacing:.04em; text-align:right; }
   .num.oro{ color:var(--oro) }
-  .num.small{ font-size:17px; color:var(--cal-dim) }
-  td.num{ width:110px }
+  .num.small{ font-size:14px; color:var(--cal-dim) }
+  td.num{ width:90px }
 
   /* ---------- partidos ---------- */
   .grid-partidos{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; }
