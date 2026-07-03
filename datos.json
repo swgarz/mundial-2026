@@ -35,6 +35,10 @@
     {
       "id": "p1783101934027",
       "name": "Alexa"
+    },
+    {
+      "id": "p1783112004755",
+      "name": "David"
     }
   ],
   "matches": [
@@ -111,6 +115,14 @@
       "nota": "Falta el rival: COL vs GHA (3 jul)"
     }
   ],
-  "picks": {},
+  "picks": {
+    "p1783040200191": {
+      "m1": {
+        "res": "1",
+        "h": null,
+        "a": null
+      }
+    }
+  },
   "avanza": {}
 }
