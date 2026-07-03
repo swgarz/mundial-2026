@@ -23,6 +23,10 @@
 
   /* ---------- encabezado tipo marcador ---------- */
   header{ text-align:left; padding:26px 0 10px; }
+  .hero{ display:flex; gap:32px; align-items:flex-start; flex-wrap:wrap; }
+  .hero header{ flex:1 1 360px; }
+  .pos-lado{ flex:1 1 320px; max-width:520px; padding-top:26px; }
+  .pos-lado h2{ margin:0 0 12px; }
   .eyebrow{ letter-spacing:.35em; font-size:12px; color:var(--oro); text-transform:uppercase; }
   h1{ font-family:'Anton',sans-serif; font-size:clamp(38px,7vw,72px); letter-spacing:.02em;
       line-height:1; text-transform:uppercase; text-shadow:0 3px 0 rgba(0,0,0,.35); }
@@ -163,18 +167,29 @@
 </head>
 <body>
 <div class="wrap">
-  <header>
-    <div class="eyebrow">Mundial 2026 · Attrapi</div>
-    <h1>Quiniela <span class="thin">Octavos</span></h1>
-    <p class="reglas">
-      · <b>1 punto</b> por atinarle al <b>ganador</b> del partido.<br>
-      · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>.<br>
-      · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
-      <b>Ojo:</b> aquí no hay empates: siempre gana alguien. Si el partido se va a penales,
-      el marcador que se captura es el <b>marcador final de los penales</b>, y con ese se califica todo.<br>
-      La apuesta es de <b>$1,000 pesos</b> por jugador.
-    </p>
-  </header>
+  <div class="hero">
+    <header>
+      <div class="eyebrow">Mundial 2026 · Attrapi</div>
+      <h1>Quiniela <span class="thin">Octavos</span></h1>
+      <p class="reglas">
+        · <b>1 punto</b> por atinarle al <b>ganador</b> del partido.<br>
+        · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>.<br>
+        · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
+        <b>Ojo:</b> aquí no hay empates: siempre gana alguien. Si el partido se va a penales,
+        el marcador que se captura es el <b>marcador final de los penales</b>, y con ese se califica todo.<br>
+        La apuesta es de <b>$1,000 pesos</b> por jugador.
+      </p>
+    </header>
+    <aside class="pos-lado">
+      <h2>Tabla de posiciones</h2>
+      <div class="tabla-pos">
+        <table>
+          <thead><tr><th></th><th>Jugador</th><th style="text-align:right">Puntos</th><th style="text-align:right">⭐ Marcadores</th></tr></thead>
+          <tbody id="standings"></tbody>
+        </table>
+      </div>
+    </aside>
+  </div>
 
   <h2>FIFA 2026</h2>
   <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
@@ -182,14 +197,6 @@
      · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real.<br>
      · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
        (tócalo de nuevo si te equivocaste).</p>
-
-  <h2>Tabla de posiciones</h2>
-  <div class="tabla-pos">
-    <table>
-      <thead><tr><th></th><th>Jugador</th><th style="text-align:right">Puntos</th><th style="text-align:right">⭐ Marcadores</th></tr></thead>
-      <tbody id="standings"></tbody>
-    </table>
-  </div>
 
   <h2>Pronósticos</h2>
   <p class="cierre" id="aviso-cierre"></p>
