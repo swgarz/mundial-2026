@@ -72,21 +72,21 @@
     },
     {
       "id": "m5",
-      "home": "TBD",
-      "away": "TBD",
-      "fecha": "6–7 jul",
+      "home": "POR",
+      "away": "ESP",
+      "fecha": "Lun 6 jul 13:00 · Dallas",
       "rh": null,
       "ra": null,
-      "nota": "POR/CRO vs ESP/AUT"
+      "nota": ""
     },
     {
       "id": "m6",
-      "home": "TBD",
-      "away": "TBD",
-      "fecha": "6–7 jul",
+      "home": "USA",
+      "away": "BEL",
+      "fecha": "Lun 6 jul · Seattle",
       "rh": null,
       "ra": null,
-      "nota": "USA/BIH vs BEL/SEN"
+      "nota": ""
     },
     {
       "id": "m7",
@@ -95,16 +95,16 @@
       "fecha": "6–7 jul",
       "rh": null,
       "ra": null,
-      "nota": "ARG/CPV vs AUS/EGY"
+      "nota": "ARG/CPV vs AUS/EGY (se definen el 3 jul)"
     },
     {
       "id": "m8",
-      "home": "TBD",
+      "home": "SUI",
       "away": "TBD",
       "fecha": "Mar 7 jul · Vancouver",
       "rh": null,
       "ra": null,
-      "nota": "SUI/ALG vs COL/GHA"
+      "nota": "Falta el rival: COL vs GHA (3 jul)"
     }
   ],
   "picks": {},
