@@ -70,6 +70,7 @@
   .lado select{ margin-top:4px; width:100%; background:transparent; color:var(--cal); border:none;
                 font-family:'Archivo'; font-weight:600; font-size:13px; text-align:center; cursor:pointer; }
   .lado select option{ color:#111 }
+  .nom-eq{ margin-top:4px; font-weight:600; font-size:13px; text-align:center }
   .vs{ font-family:'Anton'; color:var(--cal-dim); font-size:14px }
   .real{ margin-top:12px; border-top:1px dashed var(--linea); padding-top:10px; text-align:center }
   .real label{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--cal-dim); display:block; margin-bottom:6px }
@@ -468,12 +469,16 @@ function renderPartidos(){
       <div class="equipos">
         <div class="lado">
           <span class="bandera">${bandera(m.home)}</span>
-          <select onchange="setEquipo('${m.id}','home',this.value)" aria-label="Equipo local">${opcionesEquipo(m.home)}</select>
+          ${m.home==="TBD"
+            ? `<select onchange="setEquipo('${m.id}','home',this.value)" aria-label="Equipo local">${opcionesEquipo(m.home)}</select>`
+            : `<div class="nom-eq">${esc(nombre(m.home))}</div>`}
         </div>
         <div class="vs">VS</div>
         <div class="lado">
           <span class="bandera">${bandera(m.away)}</span>
-          <select onchange="setEquipo('${m.id}','away',this.value)" aria-label="Equipo visitante">${opcionesEquipo(m.away)}</select>
+          ${m.away==="TBD"
+            ? `<select onchange="setEquipo('${m.id}','away',this.value)" aria-label="Equipo visitante">${opcionesEquipo(m.away)}</select>`
+            : `<div class="nom-eq">${esc(nombre(m.away))}</div>`}
         </div>
       </div>
       ${m.nota && tbd ? `<p class="nota" style="text-align:center;margin-top:6px">${esc(m.nota)}</p>`:""}
