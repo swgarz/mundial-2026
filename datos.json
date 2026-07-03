@@ -102,12 +102,12 @@
     },
     {
       "id": "m7",
-      "home": "TBD",
-      "away": "TBD",
-      "fecha": "6–7 jul",
+      "home": "ARG",
+      "away": "EGY",
+      "fecha": "Mar 7 jul · Atlanta",
       "rh": null,
       "ra": null,
-      "nota": "ARG/CPV vs AUS/EGY (se definen el 3 jul)"
+      "nota": "EGY eliminó a AUS en penales (1-1, 4-2); ARG venció 1-0 a CPV"
     },
     {
       "id": "m8",
@@ -116,7 +116,7 @@
       "fecha": "Mar 7 jul · Vancouver",
       "rh": null,
       "ra": null,
-      "nota": "Falta el rival: COL vs GHA (3 jul)"
+      "nota": "Falta el rival: COL vs GHA (por confirmar)"
     }
   ],
   "picks": {

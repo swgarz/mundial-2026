@@ -178,6 +178,14 @@
     </p>
   </header>
 
+  <h2>FIFA 2026</h2>
+  <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
+  <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
+     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real. Si el partido terminó empatado,
+       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
+     · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
+       (tócalo de nuevo si te equivocaste).</p>
+
   <h2>Tabla de posiciones</h2>
   <div class="tabla-pos">
     <table>
@@ -185,11 +193,6 @@
       <tbody id="standings"></tbody>
     </table>
   </div>
-
-  <h2>Los 8 partidos</h2>
-  <div class="grid-partidos" id="partidos"></div>
-  <p class="nota">En los cruces "por definir": cuando se sepa el clasificado, elígelo del menú y la bandera
-     y toda la tabla se actualizan solitas. El marcador real se captura aquí y los puntos se recalculan al instante.</p>
 
   <h2>Pronósticos</h2>
   <p class="cierre" id="aviso-cierre"></p>
@@ -215,13 +218,6 @@
      Cuando terminen de llenar sus pronósticos, presiona <b>💾 Guardar</b>: todo queda guardado en la página
      y cualquiera que la abra verá lo último guardado.</p>
 
-  <h2>El camino a la final</h2>
-  <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
-  <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
-     · Los de <b>octavos</b> avanzan solos con el marcador real capturado arriba. Si el partido terminó empatado,
-       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
-     · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
-       (tócalo de nuevo si te equivocaste).</p>
   <p class="aviso-storage" id="aviso-storage">⚠ En esta vista previa los datos no se guardan al recargar. Descarga
      el archivo y ábrelo en tu navegador o súbelo a GitHub Pages para que todo se guarde solo.</p>
 </div>
@@ -248,8 +244,8 @@ const ESTADO_INICIAL = {
     {id:"m4", home:"BRA", away:"NOR", fecha:"Dom 5 jul 14:00 · NY",     rh:null, ra:null, nota:""},
     {id:"m5", home:"POR", away:"ESP", fecha:"Lun 6 jul 13:00 · Dallas", rh:null, ra:null, nota:""},
     {id:"m6", home:"USA", away:"BEL", fecha:"Lun 6 jul · Seattle",      rh:null, ra:null, nota:""},
-    {id:"m7", home:"TBD", away:"TBD", fecha:"6–7 jul", rh:null, ra:null, nota:"ARG/CPV vs AUS/EGY (se definen el 3 jul)"},
-    {id:"m8", home:"SUI", away:"TBD", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"Falta el rival: COL vs GHA (3 jul)"}
+    {id:"m7", home:"ARG", away:"EGY", fecha:"Mar 7 jul · Atlanta", rh:null, ra:null, nota:"EGY eliminó a AUS en penales (1-1, 4-2); ARG venció 1-0 a CPV"},
+    {id:"m8", home:"SUI", away:"TBD", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"Falta el rival: COL vs GHA (por confirmar)"}
   ],
   picks:{} /* picks[playerId][matchId] = {res:'1'|'X'|'2'|null, h:null, a:null} */
 };
@@ -384,7 +380,6 @@ function nombre(code){ return (EQUIPOS[code]||EQUIPOS.TBD).n; }
 function render(){
   S.avanza = S.avanza || {};
   renderStandings();
-  renderPartidos();
   renderMatriz();
   renderBracket();
   renderCierre();
@@ -466,51 +461,6 @@ function renderStandings(){
       <td class="num oro">${f.pts}</td>
       <td class="num small">${f.estrellas} ⭐</td>
     </tr>`).join("") || `<tr><td colspan="4" style="color:var(--cal-dim)">Agrega jugadores para empezar</td></tr>`;
-}
-
-function opcionesEquipo(sel){
-  return Object.entries(EQUIPOS).map(([c,e])=>
-    `<option value="${c}" ${c===sel?"selected":""}>${e.n}</option>`).join("");
-}
-
-function renderPartidos(){
-  const cont = document.getElementById("partidos");
-  cont.innerHTML = S.matches.map(m=>{
-    const rr = resultadoReal(m);
-    const tbd = m.home==="TBD" || m.away==="TBD";
-    const chip = rr ? `<span class="chip jugado">Jugado</span>`
-               : tbd ? `<span class="chip tbd">Por definir</span>`
-               : `<span class="chip">Por jugar</span>`;
-    return `<div class="partido">
-      <div class="top">${chip}
-        <input class="fecha-in" value="${esc(m.fecha)}" onchange="setFecha('${m.id}',this.value)" aria-label="Fecha">
-      </div>
-      <div class="equipos">
-        <div class="lado">
-          <span class="bandera">${bandera(m.home)}</span>
-          ${m.home==="TBD"
-            ? `<select onchange="setEquipo('${m.id}','home',this.value)" aria-label="Equipo local">${opcionesEquipo(m.home)}</select>`
-            : `<div class="nom-eq">${esc(nombre(m.home))}</div>`}
-        </div>
-        <div class="vs">VS</div>
-        <div class="lado">
-          <span class="bandera">${bandera(m.away)}</span>
-          ${m.away==="TBD"
-            ? `<select onchange="setEquipo('${m.id}','away',this.value)" aria-label="Equipo visitante">${opcionesEquipo(m.away)}</select>`
-            : `<div class="nom-eq">${esc(nombre(m.away))}</div>`}
-        </div>
-      </div>
-      ${m.nota && tbd ? `<p class="nota" style="text-align:center;margin-top:6px">${esc(m.nota)}</p>`:""}
-      <div class="real">
-        <label>Marcador real (90')</label>
-        <input class="score-in" type="number" min="0" max="99" placeholder="–" value="${m.rh??""}"
-               onchange="setReal('${m.id}','rh',this.value)" aria-label="Goles local">
-        <span class="guion">–</span>
-        <input class="score-in" type="number" min="0" max="99" placeholder="–" value="${m.ra??""}"
-               onchange="setReal('${m.id}','ra',this.value)" aria-label="Goles visitante">
-      </div>
-    </div>`;
-  }).join("");
 }
 
 function renderMatriz(){
