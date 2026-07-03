@@ -515,7 +515,7 @@ function renderPartidos(){
 function renderMatriz(){
   const head = document.getElementById("matriz-head");
   head.innerHTML = `<th>Jugador</th>` + S.matches.map(m=>
-    `<th><span class="mini-b">${bandera(m.home,true)}<i class="mini-vs">vs</i>${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>vs ${esc(nombre(m.away))}</th>`
+    `<th><span class="mini-b">${bandera(m.home,true)}<i class="mini-vs">vs</i>${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>${esc(nombre(m.away))}</th>`
   ).join("");
 
   const lock = cerrado() ? "disabled" : "";
