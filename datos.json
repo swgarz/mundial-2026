@@ -43,8 +43,8 @@
       "home": "CAN",
       "away": "MAR",
       "fecha": "Sáb 4 jul · Houston",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 3,
       "nota": ""
     },
     {
@@ -52,8 +52,8 @@
       "home": "PAR",
       "away": "FRA",
       "fecha": "Sáb 4 jul · Filadelfia",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 3,
       "nota": ""
     },
     {
@@ -61,8 +61,8 @@
       "home": "MEX",
       "away": "ENG",
       "fecha": "Dom 5 jul 18:00 · Azteca",
-      "rh": null,
-      "ra": null,
+      "rh": 2,
+      "ra": 1,
       "nota": ""
     },
     {
@@ -70,8 +70,8 @@
       "home": "BRA",
       "away": "NOR",
       "fecha": "Dom 5 jul 14:00 · NY",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 0,
       "nota": ""
     },
     {
@@ -79,8 +79,8 @@
       "home": "POR",
       "away": "ESP",
       "fecha": "Lun 6 jul 13:00 · Dallas",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 0,
       "nota": ""
     },
     {
@@ -88,8 +88,8 @@
       "home": "USA",
       "away": "BEL",
       "fecha": "Lun 6 jul · Seattle",
-      "rh": null,
-      "ra": null,
+      "rh": 0,
+      "ra": 1,
       "nota": ""
     },
     {
