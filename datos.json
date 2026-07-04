@@ -75,7 +75,8 @@
     {
       "id": "p1783184204610",
       "name": "Mayo",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     }
   ],
   "matches": [
