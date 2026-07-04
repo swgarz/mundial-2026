@@ -81,7 +81,8 @@
     {
       "id": "p1783199000071",
       "name": "Salma",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     }
   ],
   "matches": [

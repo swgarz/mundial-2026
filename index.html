@@ -212,7 +212,6 @@
   </table></div>
   <div class="fila-botones">
     <button class="btn solido" id="btn-guardar" onclick="guardarNube()">💾 Guardar</button>
-    <button class="btn" onclick="agregarJugador()">+ Agregar jugador</button>
     <button class="btn" onclick="exportar()">Descargar imagen</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
@@ -567,10 +566,7 @@ function setFav(pid, code){
   if(p){ p.fav = code || null; render(); }
 }
 function agregarJugador(){
-  const nom = prompt("Nombre del jugador:");
-  if(!nom || !nom.trim()) return;
-  S.players.push({id:"p"+Date.now(), name:nom.trim()});
-  render();
+  alert("La quiniela ya está cerrada: no se pueden agregar jugadores.");
 }
 function renombrar(pid, v){
   if(bloqueado(pid)){ render(); return; }
