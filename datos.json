@@ -8,8 +8,7 @@
     {
       "id": "p1783025278966",
       "name": "Franca",
-      "fav": "FRA",
-      "lock": true
+      "fav": "FRA"
     },
     {
       "id": "p1783025284025",
@@ -37,8 +36,7 @@
     {
       "id": "p1783040195213",
       "name": "Estela",
-      "fav": "FRA",
-      "lock": true
+      "fav": "FRA"
     },
     {
       "id": "p1783040200191",
@@ -49,8 +47,7 @@
     {
       "id": "p1783101934027",
       "name": "Alexa",
-      "fav": "FRA",
-      "lock": true
+      "fav": "FRA"
     },
     {
       "id": "p1783113374772",
@@ -524,37 +521,37 @@
         "a": 2
       },
       "m2": {
-        "res": null,
+        "res": "2",
         "h": 1,
         "a": 2
       },
       "m3": {
-        "res": null,
+        "res": "2",
         "h": 0,
         "a": 1
       },
       "m4": {
-        "res": null,
+        "res": "1",
         "h": 2,
         "a": 0
       },
       "m5": {
-        "res": null,
+        "res": "2",
         "h": 1,
         "a": 2
       },
       "m6": {
-        "res": null,
+        "res": "2",
         "h": 0,
         "a": 2
       },
       "m7": {
-        "res": null,
+        "res": "1",
         "h": 2,
         "a": 0
       },
       "m8": {
-        "res": null,
+        "res": "2",
         "h": 0,
         "a": 2
       }
