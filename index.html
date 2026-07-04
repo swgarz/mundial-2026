@@ -323,7 +323,16 @@ async function guardarNube(){
     const h = {Authorization:"Bearer "+tk, Accept:"application/vnd.github+json"};
     let sha = null;
     const r0 = await fetch(api+`?t=${Date.now()}`, {headers:h, cache:"no-store"});
-    if(r0.status===200) sha = (await r0.json()).sha;
+    if(r0.status===200){
+      const meta = await r0.json();
+      sha = meta.sha;
+      /* candado: los cruces y marcadores reales solo se cambian desde el repositorio,
+         nunca desde el navegador — así una versión vieja no puede meter resultados falsos */
+      try{
+        const remoto = JSON.parse(decodeURIComponent(escape(atob(meta.content.replace(/\n/g,"")))));
+        if(remoto && Array.isArray(remoto.matches)) S.matches = remoto.matches;
+      }catch(e){}
+    }
     const cuerpo = {
       message: "Guardar quiniela desde la página",
       content: btoa(unescape(encodeURIComponent(JSON.stringify(S,null,2))))
@@ -335,6 +344,7 @@ async function guardarNube(){
       throw new Error("Token inválido o sin permisos. Vuelve a presionar Guardar y pega un token válido.");
     }
     if(!r.ok) throw new Error("Error "+r.status+" al guardar.");
+    cargando = true; render(); cargando = false;
     marcarGuardado();
   }catch(e){
     alert("No se pudo guardar en la página: " + (e.message||"revisa tu internet") + "");

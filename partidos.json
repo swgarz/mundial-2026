@@ -1,0 +1,74 @@
+[
+  {
+    "id": "m1",
+    "home": "CAN",
+    "away": "MAR",
+    "fecha": "Sáb 4 jul · Houston",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m2",
+    "home": "PAR",
+    "away": "FRA",
+    "fecha": "Sáb 4 jul · Filadelfia",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m3",
+    "home": "MEX",
+    "away": "ENG",
+    "fecha": "Dom 5 jul 18:00 · Azteca",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m4",
+    "home": "BRA",
+    "away": "NOR",
+    "fecha": "Dom 5 jul 14:00 · NY",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m5",
+    "home": "POR",
+    "away": "ESP",
+    "fecha": "Lun 6 jul 13:00 · Dallas",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m6",
+    "home": "USA",
+    "away": "BEL",
+    "fecha": "Lun 6 jul · Seattle",
+    "rh": null,
+    "ra": null,
+    "nota": ""
+  },
+  {
+    "id": "m7",
+    "home": "ARG",
+    "away": "EGY",
+    "fecha": "Mar 7 jul · Atlanta",
+    "rh": null,
+    "ra": null,
+    "nota": "ARG venció 3-2 a CPV en tiempo extra; EGY eliminó a AUS en penales"
+  },
+  {
+    "id": "m8",
+    "home": "SUI",
+    "away": "COL",
+    "fecha": "Mar 7 jul · Vancouver",
+    "rh": null,
+    "ra": null,
+    "nota": "COL venció 1-0 a GHA y es el rival de SUI"
+  }
+]

@@ -1,0 +1,40 @@
+name: Sanear datos de la quiniela
+
+# Los cruces y marcadores oficiales viven en partidos.json (solo los edita el organizador).
+# Si un guardado desde la página (o una versión vieja en caché) mete otros cruces o
+# marcadores en datos.json, este robot los corrige al instante.
+on:
+  push:
+    branches: [main]
+    paths: ["datos.json", "partidos.json"]
+
+jobs:
+  sanear:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Forzar cruces y marcadores oficiales
+        run: |
+          python3 - <<'EOF'
+          import json
+          datos = json.load(open('datos.json', encoding='utf-8'))
+          oficial = json.load(open('partidos.json', encoding='utf-8'))
+          if datos.get('matches') != oficial:
+              datos['matches'] = oficial
+              json.dump(datos, open('datos.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
+              print('datos.json corregido con los partidos oficiales')
+          else:
+              print('datos.json ya coincide con los partidos oficiales')
+          EOF
+      - name: Subir corrección si hubo cambios
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "quiniela-bot"
+            git config user.email "actions@users.noreply.github.com"
+            git add datos.json
+            git commit -m "Robot: restaura los cruces y marcadores oficiales"
+            git pull --rebase
+            git push
+          fi
