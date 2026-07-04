@@ -85,8 +85,8 @@
       "home": "CAN",
       "away": "MAR",
       "fecha": "Sáb 4 jul · Houston",
-      "rh": null,
-      "ra": null,
+      "rh": 0,
+      "ra": 3,
       "nota": ""
     },
     {
