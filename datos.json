@@ -18,17 +18,20 @@
     {
       "id": "p1783025310967",
       "name": "Caroline",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     },
     {
       "id": "p1783025322972",
       "name": "Daniel",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     },
     {
       "id": "p1783040188581",
       "name": "Angie",
-      "fav": "POR"
+      "fav": "POR",
+      "lock": true
     },
     {
       "id": "p1783040195213",
@@ -38,7 +41,8 @@
     {
       "id": "p1783040200191",
       "name": "David",
-      "fav": "POR"
+      "fav": "POR",
+      "lock": true
     },
     {
       "id": "p1783101934027",

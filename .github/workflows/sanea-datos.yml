@@ -6,7 +6,7 @@ name: Sanear datos de la quiniela
 on:
   push:
     branches: [main]
-    paths: ["datos.json", "partidos.json"]
+    paths: ["datos.json", "partidos.json", "bloqueados.json"]
 
 jobs:
   sanear:
@@ -18,15 +18,25 @@ jobs:
       - name: Forzar cruces y marcadores oficiales
         run: |
           python3 - <<'EOF'
-          import json
+          import json, os
           datos = json.load(open('datos.json', encoding='utf-8'))
-          oficial = json.load(open('partidos.json', encoding='utf-8'))
-          if datos.get('matches') != oficial:
-              datos['matches'] = oficial
+          antes = json.dumps(datos, sort_keys=True)
+          datos['matches'] = json.load(open('partidos.json', encoding='utf-8'))
+          # jugadores congelados: sus datos y pronósticos siempre vuelven a lo oficial
+          if os.path.exists('bloqueados.json'):
+              bloq = json.load(open('bloqueados.json', encoding='utf-8'))
+              vivos = {p['id']: p for p in datos['players']}
+              for pid, pdata in bloq['players'].items():
+                  if pid in vivos:
+                      vivos[pid].update(pdata)
+                  else:
+                      datos['players'].append({'id': pid, **pdata})
+              datos.setdefault('picks', {}).update(bloq['picks'])
+          if json.dumps(datos, sort_keys=True) != antes:
               json.dump(datos, open('datos.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
-              print('datos.json corregido con los partidos oficiales')
+              print('datos.json corregido (partidos oficiales y jugadores congelados)')
           else:
-              print('datos.json ya coincide con los partidos oficiales')
+              print('datos.json ya está en orden')
           EOF
       - name: Subir corrección si hubo cambios
         run: |

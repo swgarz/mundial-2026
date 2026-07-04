@@ -489,9 +489,9 @@ function renderMatriz(){
     `<th><span class="mini-b">${bandera(m.home,true)}<i class="mini-vs">vs</i>${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>${esc(nombre(m.away))}</th>`
   ).join("");
 
-  const lock = cerrado() ? "disabled" : "";
   const body = document.getElementById("matriz-body");
   body.innerHTML = S.players.map(p=>{
+    const lock = (cerrado() || p.lock) ? "disabled" : "";
     const celdas = S.matches.map(m=>{
       const pk = (S.picks[p.id]||{})[m.id] || {res:null,h:null,a:null};
       const rr = resultadoReal(m);
@@ -522,8 +522,9 @@ function renderMatriz(){
       .map(([c,e])=>`<option value="${c}" ${p.fav===c?"selected":""}>${e.n}</option>`).join("");
     return `<tr>
       <td><div class="jug-nom">
-        <input value="${esc(p.name)}" onchange="renombrar('${p.id}',this.value)" aria-label="Nombre del jugador">
-        <button class="del-jug" onclick="quitarJugador('${p.id}')" title="Quitar jugador">✕</button>
+        <input ${lock} value="${esc(p.name)}" onchange="renombrar('${p.id}',this.value)" aria-label="Nombre del jugador">
+        ${p.lock ? `<span title="Fila congelada: ya nadie puede cambiar estos pronósticos">🔒</span>`
+                 : `<button class="del-jug" onclick="quitarJugador('${p.id}')" title="Quitar jugador">✕</button>`}
       </div>
       <select class="fav-sel" ${lock} onchange="setFav('${p.id}',this.value)"
               title="Tu favorito para campeón del Mundial: +5 puntos si gana">
@@ -540,22 +541,26 @@ function setReal(mid, campo, v){
   m[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
   render();
 }
+function bloqueado(pid){
+  const p = S.players.find(x=>x.id===pid);
+  return cerrado() || !!(p && p.lock);
+}
 function setPick(pid, mid, v){
-  if(cerrado()) return;
+  if(bloqueado(pid)) return;
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk.res = (pk.res===v) ? null : v;   /* volver a tocar el mismo lo des-selecciona */
   render();
 }
 function setPickScore(pid, mid, campo, v){
-  if(cerrado()) return;
+  if(bloqueado(pid)) return;
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
   render();
 }
 function setFav(pid, code){
-  if(cerrado()) return;
+  if(bloqueado(pid)) return;
   const p = S.players.find(x=>x.id===pid);
   if(p){ p.fav = code || null; render(); }
 }
@@ -566,9 +571,13 @@ function agregarJugador(){
   S.players.push({id:"p"+Date.now(), name:nom.trim()});
   render();
 }
-function renombrar(pid, v){ const p=S.players.find(x=>x.id===pid); if(v.trim()) p.name=v.trim(); render(); }
+function renombrar(pid, v){
+  if(bloqueado(pid)){ render(); return; }
+  const p=S.players.find(x=>x.id===pid); if(v.trim()) p.name=v.trim(); render();
+}
 function quitarJugador(pid){
   const p=S.players.find(x=>x.id===pid);
+  if(p && p.lock){ alert("Esta fila está congelada: no se puede quitar."); return; }
   if(!confirm(`¿Quitar a ${p.name} y borrar sus pronósticos?`)) return;
   S.players = S.players.filter(x=>x.id!==pid);
   delete S.picks[pid];
