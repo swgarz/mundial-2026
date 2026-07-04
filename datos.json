@@ -36,7 +36,8 @@
     {
       "id": "p1783040195213",
       "name": "Estela",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     },
     {
       "id": "p1783040200191",
@@ -47,7 +48,8 @@
     {
       "id": "p1783101934027",
       "name": "Alexa",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     },
     {
       "id": "p1783113374772",
