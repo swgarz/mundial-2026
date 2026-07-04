@@ -357,8 +357,9 @@ window.addEventListener("beforeunload", e=>{
 });
 
 /* ============== cierre de pronósticos ============== */
-const CIERRE = new Date("2026-07-04T12:00:00-06:00"); /* sábado 4 de julio 2026, 12:00 PM hora centro de México */
-function cerrado(){ return Date.now() >= CIERRE.getTime(); }
+/* El cierre por horario ya no aplica: cada fila tiene su candado 🔒 y los partidos
+   con resultado capturado se bloquean solos. */
+function cerrado(){ return false; }
 function renderCierre(){
   const el = document.getElementById("aviso-cierre");
   if(!el) return;
