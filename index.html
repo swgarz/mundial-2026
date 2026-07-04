@@ -362,9 +362,7 @@ function cerrado(){ return Date.now() >= CIERRE.getTime(); }
 function renderCierre(){
   const el = document.getElementById("aviso-cierre");
   if(!el) return;
-  el.innerHTML = cerrado()
-    ? "🔒 <b>Pronósticos cerrados</b> desde el sábado 4 de julio a las 12:00 PM. Ya no se pueden cambiar — solo falta capturar los resultados reales."
-    : "🔓 Pueden llenar y cambiar pronósticos hasta el <b>sábado 4 de julio a las 12:00 PM</b>. Las filas con 🔒 ya quedaron selladas.";
+  el.innerHTML = "🔒 <b>Quedaron selladas las filas</b>, sin cambios.";
 }
 
 /* ============== cálculo de puntos ============== */
