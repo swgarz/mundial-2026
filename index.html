@@ -493,6 +493,7 @@ function renderMatriz(){
     const celdas = S.matches.map(m=>{
       const pk = (S.picks[p.id]||{})[m.id] || {res:null,h:null,a:null};
       const rr = resultadoReal(m);
+      const lockM = rr ? "disabled" : lock;  /* partido ya jugado: nadie puede cambiar su pick */
       const clasePick = v => {
         let c = "pick" + (pk.res===v ? " on":"");
         if(rr && pk.res===v) c += (v===rr ? " hit" : " miss");
@@ -501,15 +502,15 @@ function renderMatriz(){
       const exacto = rr && pk.h!==null && pk.a!==null && pk.h!=="" && pk.a!=="" && +pk.h===+m.rh && +pk.a===+m.ra;
       return `<td><div class="celda">
         <div class="picks" role="group" aria-label="Pronóstico de resultado">
-          <button ${lock} class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
-          <button ${lock} class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
-          <button ${lock} class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
+          <button ${lockM} class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
+          <button ${lockM} class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
+          <button ${lockM} class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
         </div>
         <div class="mini-marcador">
-          <input ${lock} type="number" min="0" max="99" value="${pk.h??""}" placeholder="–"
+          <input ${lockM} type="number" min="0" max="99" value="${pk.h??""}" placeholder="–"
                  class="${exacto?'exacto':''}" onchange="setPickScore('${p.id}','${m.id}','h',this.value)" aria-label="Goles pronosticados local">
           <span>–</span>
-          <input ${lock} type="number" min="0" max="99" value="${pk.a??""}" placeholder="–"
+          <input ${lockM} type="number" min="0" max="99" value="${pk.a??""}" placeholder="–"
                  class="${exacto?'exacto':''}" onchange="setPickScore('${p.id}','${m.id}','a',this.value)" aria-label="Goles pronosticados visitante">
           <span class="star">${exacto?"⭐":""}</span>
         </div>
@@ -545,6 +546,7 @@ function bloqueado(pid){
 }
 function setPick(pid, mid, v){
   if(bloqueado(pid)) return;
+  if(resultadoReal(S.matches.find(x=>x.id===mid))) return;  /* partido ya jugado */
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk.res = (pk.res===v) ? null : v;   /* volver a tocar el mismo lo des-selecciona */
@@ -552,6 +554,7 @@ function setPick(pid, mid, v){
 }
 function setPickScore(pid, mid, campo, v){
   if(bloqueado(pid)) return;
+  if(resultadoReal(S.matches.find(x=>x.id===mid))) return;  /* partido ya jugado */
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
