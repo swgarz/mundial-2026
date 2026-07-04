@@ -8,7 +8,8 @@
     {
       "id": "p1783025278966",
       "name": "Franca",
-      "fav": "FRA"
+      "fav": "FRA",
+      "lock": true
     },
     {
       "id": "p1783025284025",
