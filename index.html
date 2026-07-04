@@ -357,14 +357,14 @@ window.addEventListener("beforeunload", e=>{
 });
 
 /* ============== cierre de pronósticos ============== */
-const CIERRE = new Date("2026-07-04T09:00:00-06:00"); /* sábado 4 de julio 2026, 9:00 AM hora centro de México */
+const CIERRE = new Date("2026-07-04T10:50:00-06:00"); /* sábado 4 de julio 2026, 10:50 AM hora centro de México */
 function cerrado(){ return Date.now() >= CIERRE.getTime(); }
 function renderCierre(){
   const el = document.getElementById("aviso-cierre");
   if(!el) return;
   el.innerHTML = cerrado()
-    ? "🔒 <b>Pronósticos cerrados</b> desde el sábado 4 de julio a las 9:00 AM. Ya no se pueden cambiar — solo falta capturar los resultados reales."
-    : "🔓 Pueden llenar y cambiar pronósticos hasta el <b>sábado 4 de julio a las 9:00 AM</b>. A esa hora se cierran y ya nada se mueve.";
+    ? "🔒 <b>Pronósticos cerrados</b> desde el sábado 4 de julio a las 10:50 AM. Ya no se pueden cambiar — solo falta capturar los resultados reales."
+    : "🔓 Pueden llenar y cambiar pronósticos hasta el <b>sábado 4 de julio a las 10:50 AM</b>. A esa hora se cierran y ya nada se mueve.";
 }
 
 /* ============== cálculo de puntos ============== */
