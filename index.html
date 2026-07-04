@@ -123,14 +123,6 @@
                         border-radius:6px; text-align:center; font-family:'Anton'; font-size:14px }
   .mini-marcador .star{ font-size:14px; width:16px }
   .mini-marcador input.exacto{ border-color:var(--oro); color:var(--oro) }
-  .pen-row{ display:flex; gap:3px; align-items:center; justify-content:center }
-  .pen-lbl{ font-size:11px }
-  .pen{ min-width:34px; height:20px; padding:0 4px; border:1px dashed var(--linea); background:transparent;
-        color:var(--cal-dim); border-radius:5px; font-family:'Anton'; font-size:10px; letter-spacing:.04em; cursor:pointer }
-  .pen.on{ background:var(--oro); color:#3a2c00; border-color:var(--oro) }
-  .pen.hit{ background:var(--verde-ok); color:#05130c; border-color:var(--verde-ok) }
-  .pen.miss{ opacity:.35 }
-  .pen:disabled{ cursor:default }
 
   /* ---------- cierre de pronósticos ---------- */
   .cierre{ font-size:12.5px; color:var(--oro); margin:-6px 0 12px }
@@ -188,7 +180,7 @@
         · Todo se califica con el marcador a los <b>120 minutos</b>: si hay tiempo extra, el empate y el
           marcador exacto cuentan hasta que termine. Ejemplo: dijiste <b>2–2</b> en México vs Inglaterra
           y el partido termina 2–2 al minuto 120 → te llevas los <b>3 puntos</b>, no uno.<br>
-        · Si pones <b>EMP</b>, abajo eliges quién gana en <b>penales</b>: atinarle da <b>+1 punto</b> extra.<br>
+        · Los <b>penales no cuentan</b> para los puntos.<br>
         · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
         La apuesta es de <b>$1,000 pesos</b> por jugador.
       </p>
@@ -227,7 +219,6 @@
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>),
        o <b>EMP</b> si crees que van a empatar (el empate cuenta con el marcador a los <b>120 minutos</b>).<br>
      · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto a los 120').<br>
-     · Si escogiste <b>EMP</b>, aparece abajo 🥅 para elegir quién gana en <b>penales</b> (+1 punto si le atinas).<br>
      · Junto a tu nombre, elige tu <b>🏆 Favorito</b>: el equipo que crees que será campeón del Mundial.
        Si gana, sumas <b>+5 puntos</b>.<br><br>
      Cuando el partido se juegue y se capture el resultado real:<br>
@@ -381,11 +372,6 @@ function puntosDe(pid, campeon){
     const exacto = pk.h!==null && pk.a!==null && pk.h!=="" && pk.a!=="" && +pk.h===+m.rh && +pk.a===+m.ra;
     if(exacto){ pts+=3; estrellas+=1; }
     else if(pk.res===rr) pts+=1;
-    if(rr==="X" && pk.res==="X" && pk.pen){
-      const ganPen = S.avanza[m.id];
-      const elegido = pk.pen==="1" ? m.home : m.away;
-      if(ganPen && elegido===ganPen) pts+=1;  /* +1 por atinarle al ganador de penales */
-    }
   }
   const p = S.players.find(x=>x.id===pid);
   if(campeon && p && p.fav===campeon) pts+=5;
@@ -519,22 +505,6 @@ function renderMatriz(){
                  class="${exacto?'exacto':''}" onchange="setPickScore('${p.id}','${m.id}','a',this.value)" aria-label="Goles pronosticados visitante">
           <span class="star">${exacto?"⭐":""}</span>
         </div>
-        ${pk.res==="X" && m.home!=="TBD" && m.away!=="TBD" ? (()=>{
-          const ganPen = S.avanza[m.id];
-          const clasePen = v => {
-            let c = "pen" + (pk.pen===v ? " on":"");
-            if(rr==="X" && ganPen && pk.pen===v){
-              const elegido = v==="1" ? m.home : m.away;
-              c += (elegido===ganPen ? " hit" : " miss");
-            }
-            return c;
-          };
-          return `<div class="pen-row" title="¿Quién gana en penales? +1 punto si le atinas">
-            <span class="pen-lbl">🥅</span>
-            <button ${lock} class="${clasePen('1')}" onclick="setPickPen('${p.id}','${m.id}','1')">${m.home}</button>
-            <button ${lock} class="${clasePen('2')}" onclick="setPickPen('${p.id}','${m.id}','2')">${m.away}</button>
-          </div>`;
-        })() : ""}
       </div></td>`;
     }).join("");
     const opcionesFav = Object.entries(EQUIPOS).filter(([c])=>c!=="TBD")
@@ -565,14 +535,6 @@ function setPick(pid, mid, v){
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk.res = (pk.res===v) ? null : v;   /* volver a tocar el mismo lo des-selecciona */
-  if(pk.res!=="X") pk.pen = null;     /* el pick de penales solo aplica con empate */
-  render();
-}
-function setPickPen(pid, mid, v){
-  if(cerrado()) return;
-  S.picks[pid] = S.picks[pid]||{};
-  const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
-  pk.pen = (pk.pen===v) ? null : v;
   render();
 }
 function setPickScore(pid, mid, campo, v){
