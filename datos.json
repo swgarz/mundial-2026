@@ -31,8 +31,7 @@
     {
       "id": "p1783040188581",
       "name": "Angie",
-      "fav": "POR",
-      "lock": true
+      "fav": "POR"
     },
     {
       "id": "p1783040195213",
@@ -61,10 +60,6 @@
       "id": "p1783117035825",
       "name": "Bruno",
       "fav": "FRA"
-    },
-    {
-      "id": "p1783182562610",
-      "name": "Ulises"
     }
   ],
   "matches": [
