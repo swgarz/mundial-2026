@@ -174,11 +174,10 @@
       <div class="eyebrow">Mundial 2026 · Attrapi</div>
       <h1>Quiniela <span class="thin">Octavos</span></h1>
       <p class="reglas">
-        · <b>1 punto</b> por atinarle al <b>ganador</b> del partido.<br>
+        · <b>1 punto</b> por atinarle al resultado: gana uno, gana el otro o <b>empate</b> (EMP).<br>
         · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>.<br>
+        · En cada partido ganas <b>1 punto o 3 puntos</b>, no se suman.<br>
         · <b>5 puntos</b> si tu equipo <b>favorito</b> 🏆 gana el Mundial.<br>
-        <b>Ojo:</b> aquí no hay empates: siempre gana alguien. Si el partido se va a penales,
-        el marcador que se captura es el <b>marcador final de los penales</b>, y con ese se califica todo.<br>
         La apuesta es de <b>$1,000 pesos</b> por jugador.
       </p>
     </header>
@@ -196,7 +195,8 @@
   <h2>FIFA 2026</h2>
   <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
   <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
-     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real.<br>
+     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real. Si terminó empatado,
+       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
      · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
        (tócalo de nuevo si te equivocaste).</p>
 
@@ -212,9 +212,9 @@
     <button class="btn" onclick="exportar()">Descargar imagen</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
-     · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>).<br>
-     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto). Recuerda: no hay
-       empates — si el partido se va a penales, vale el marcador final de los penales.<br>
+     · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>),
+       o <b>EMP</b> si crees que van a empatar.<br>
+     · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto).<br>
      · Junto a tu nombre, elige tu <b>🏆 Favorito</b>: el equipo que crees que será campeón del Mundial.
        Si gana, sumas <b>+5 puntos</b>.<br><br>
      Cuando el partido se juegue y se capture el resultado real:<br>
@@ -253,7 +253,7 @@ const ESTADO_INICIAL = {
     {id:"m7", home:"ARG", away:"EGY", fecha:"Mar 7 jul · Atlanta", rh:null, ra:null, nota:"ARG venció 3-2 a CPV en tiempo extra; EGY eliminó a AUS en penales"},
     {id:"m8", home:"SUI", away:"TBD", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"Falta el rival: COL vs GHA (por confirmar)"}
   ],
-  picks:{} /* picks[playerId][matchId] = {res:'1'|'2'|null, h:null, a:null} */
+  picks:{} /* picks[playerId][matchId] = {res:'1'|'X'|'2'|null, h:null, a:null} */
 };
 
 /* ============== persistencia (localStorage con red de seguridad) ============== */
@@ -357,8 +357,7 @@ function renderCierre(){
 function resultadoReal(m){
   if(m.rh===null || m.ra===null || m.rh==="" || m.ra==="") return null;
   const h=+m.rh, a=+m.ra;
-  /* no hay empates: si se fue a penales, se captura el marcador final de los penales */
-  return h>a ? "1" : h<a ? "2" : null;
+  return h>a ? "1" : h<a ? "2" : "X";
 }
 function puntosDe(pid, campeon){
   let pts=0, estrellas=0;
@@ -398,6 +397,10 @@ function ganadorOctavos(m){
   const rr = resultadoReal(m);
   if(rr==="1") return m.home==="TBD" ? null : m.home;
   if(rr==="2") return m.away==="TBD" ? null : m.away;
+  if(rr==="X"){
+    const a = S.avanza[m.id];
+    return (a===m.home || a===m.away) ? a : null;
+  }
   return null;
 }
 function setAvanza(slot, code){
@@ -435,8 +438,8 @@ function renderBracket(){
       <span>${hay ? esc(nombre(code)) : "Por definir"}</span></button>`;
   };
   const octCard = m => {
-    const gan = ganadorOctavos(m);
-    return `<div class="br-match">${equipoBtn(m.id, m.home, gan, false)}${equipoBtn(m.id, m.away, gan, false)}</div>`;
+    const gan = ganadorOctavos(m), esEmpate = resultadoReal(m)==="X";
+    return `<div class="br-match">${equipoBtn(m.id, m.home, gan, esEmpate)}${equipoBtn(m.id, m.away, gan, esEmpate)}</div>`;
   };
   const card = (x, gan) =>
     `<div class="br-match">${equipoBtn(x.id, x.home, gan, true)}${equipoBtn(x.id, x.away, gan, true)}</div>`;
@@ -487,6 +490,7 @@ function renderMatriz(){
       return `<td><div class="celda">
         <div class="picks" role="group" aria-label="Pronóstico de resultado">
           <button ${lock} class="${clasePick('1')}" onclick="setPick('${p.id}','${m.id}','1')" title="Gana ${esc(nombre(m.home))}">${m.home==="TBD"?"1":m.home}</button>
+          <button ${lock} class="${clasePick('X')}" onclick="setPick('${p.id}','${m.id}','X')" title="Empate">EMP</button>
           <button ${lock} class="${clasePick('2')}" onclick="setPick('${p.id}','${m.id}','2')" title="Gana ${esc(nombre(m.away))}">${m.away==="TBD"?"2":m.away}</button>
         </div>
         <div class="mini-marcador">
