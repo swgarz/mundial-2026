@@ -207,7 +207,7 @@
   <div class="fila-botones">
     <button class="btn solido" id="btn-guardar" onclick="guardarNube()">💾 Guardar</button>
     <button class="btn" onclick="agregarJugador()">+ Agregar jugador</button>
-    <button class="btn" onclick="exportar()">Descargar PDF</button>
+    <button class="btn" onclick="exportar()">Descargar imagen</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>).<br>
@@ -554,34 +554,29 @@ function quitarJugador(pid){
   delete S.picks[pid];
   render();
 }
-function cargarHtml2pdf(){
+function cargarHtml2canvas(){
   return new Promise((listo, falla)=>{
-    if(window.html2pdf) return listo();
+    if(window.html2canvas) return listo();
     const s = document.createElement("script");
-    s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js";
+    s.src = "https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js";
     s.onload = listo; s.onerror = falla;
     document.head.appendChild(s);
   });
 }
 function exportar(){
-  cargarHtml2pdf().then(()=>{
-    const opciones = {
-      margin: 5,
-      filename: "quiniela-octavos-2026.pdf",
-      image: {type:"jpeg", quality:0.95},
-      html2canvas: {
-        scale: 2, backgroundColor: "#0b3d2e", useCORS: true, windowWidth: 1320,
-        onclone: doc => {
-          const fb = doc.querySelector(".fila-botones"); if(fb) fb.remove();
-          const av = doc.getElementById("aviso-storage"); if(av) av.remove();
-          const sc = doc.querySelector(".scroll"); if(sc) sc.style.overflow = "visible";
-          const w = doc.querySelector(".wrap"); if(w) w.style.maxWidth = "1280px";
-        }
-      },
-      jsPDF: {unit:"mm", format:"a4", orientation:"landscape"}
-    };
-    return html2pdf().set(opciones).from(document.querySelector(".wrap")).save();
-  }).catch(()=>{ window.print(); });
+  cargarHtml2canvas().then(()=>{
+    const tabla = document.querySelector(".matriz");
+    return html2canvas(tabla, {
+      scale: 2, backgroundColor: "#0b3d2e", useCORS: true,
+      width: tabla.scrollWidth, height: tabla.scrollHeight,
+      windowWidth: tabla.scrollWidth + 60
+    }).then(canvas=>{
+      const a = document.createElement("a");
+      a.download = "pronosticos-octavos-2026.png";
+      a.href = canvas.toDataURL("image/png");
+      a.click();
+    });
+  }).catch(()=>{ alert("No se pudo generar la imagen. Revisa tu internet e inténtalo de nuevo."); });
 }
 function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
 
