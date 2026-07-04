@@ -100,8 +100,8 @@
       "home": "PAR",
       "away": "FRA",
       "fecha": "Sáb 4 jul · Filadelfia",
-      "rh": null,
-      "ra": null,
+      "rh": 0,
+      "ra": 1,
       "nota": ""
     },
     {
