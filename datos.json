@@ -118,8 +118,8 @@
       "home": "BRA",
       "away": "NOR",
       "fecha": "Dom 5 jul 14:00 · NY",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 2,
       "nota": ""
     },
     {
