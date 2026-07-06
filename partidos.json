@@ -40,8 +40,8 @@
     "home": "POR",
     "away": "ESP",
     "fecha": "Lun 6 jul 13:00 · Dallas",
-    "rh": null,
-    "ra": null,
+    "rh": 0,
+    "ra": 1,
     "nota": ""
   },
   {
