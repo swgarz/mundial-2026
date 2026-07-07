@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiniela · Octavos Mundial 2026</title>
+<title>Quiniela · Mundial 2026</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='46' fill='%230b3d2e' stroke='%23ffd447' stroke-width='6'/%3E%3Ctext x='50' y='57' font-size='58' text-anchor='middle' dominant-baseline='middle'%3E%E2%9A%BD%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;600;700&display=swap" rel="stylesheet">
@@ -128,6 +128,14 @@
   .cierre{ font-size:12.5px; color:var(--oro); margin:-6px 0 12px }
   .pick:disabled, .mini-marcador input:disabled{ cursor:default }
 
+  /* ---------- pestañas de fase ---------- */
+  .tabs-fase{ display:flex; gap:8px; margin:0 0 14px; flex-wrap:wrap }
+  .tab-fase{ font-family:'Archivo'; font-weight:700; font-size:13px; letter-spacing:.06em; text-transform:uppercase;
+             padding:9px 16px; border-radius:99px; border:1.5px solid var(--linea); background:transparent;
+             color:var(--cal-dim); cursor:pointer }
+  .tab-fase:hover{ border-color:var(--cal); color:var(--cal) }
+  .tab-fase.on{ background:var(--oro); border-color:var(--oro); color:#1e1602 }
+
   /* ---------- esquema / camino a la final ---------- */
   .scroll-bracket{ overflow-x:auto; padding-bottom:6px }
   .bracket{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; min-width:1000px; align-items:stretch }
@@ -172,7 +180,7 @@
   <div class="hero">
     <header>
       <div class="eyebrow">Mundial 2026 · Attrapi</div>
-      <h1>Quiniela <span class="thin">Octavos</span></h1>
+      <h1>Quiniela <span class="thin">Mundial</span></h1>
       <p class="reglas">
         · <b>1 punto</b> por atinarle al resultado: gana uno, gana el otro o <b>empate</b> (EMP).<br>
         · <b>3 puntos</b> si le atinas al <b>marcador exacto</b>.<br>
@@ -199,12 +207,16 @@
   <h2>FIFA 2026</h2>
   <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
   <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
-     · Los de <b>octavos</b> avanzan solos cuando se captura el marcador real. Si terminó empatado,
+     · Los de <b>octavos y cuartos</b> avanzan solos cuando se captura el marcador real. Si terminó empatado,
        toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
-     · En <b>cuartos, semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
+     · En <b>semifinal y final</b>, toca al equipo que haya ganado para pasarlo a la siguiente ronda
        (tócalo de nuevo si te equivocaste).</p>
 
   <h2>Pronósticos</h2>
+  <div class="tabs-fase" id="tabs-fase">
+    <button class="tab-fase on" id="tab-cuartos" onclick="setFase('cuartos')">⚽ Cuartos de final</button>
+    <button class="tab-fase" id="tab-octavos" onclick="setFase('octavos')">📜 Octavos · historial</button>
+  </div>
   <p class="cierre" id="aviso-cierre"></p>
   <div class="scroll"><table class="matriz">
     <thead><tr id="matriz-head"></tr></thead>
@@ -215,6 +227,8 @@
     <button class="btn" onclick="exportar()">Descargar imagen</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
+     · Arriba están las <b>pestañas por fase</b>: en <b>⚽ Cuartos de final</b> llenas tus nuevos pronósticos,
+       y en <b>📜 Octavos</b> queda el historial de lo que ya se jugó (con sus puntos ya contados).<br>
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>),
        o <b>EMP</b> si crees que van a empatar (el empate cuenta con el marcador a los <b>120 minutos</b>).<br>
      · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto a los 120').<br>
@@ -247,14 +261,18 @@ const EQUIPOS = {
 const ESTADO_INICIAL = {
   players:[{id:"p1", name:"Dan"}],
   matches:[
-    {id:"m1", home:"CAN", away:"MAR", fecha:"Sáb 4 jul · Houston",     rh:null, ra:null, nota:""},
-    {id:"m2", home:"PAR", away:"FRA", fecha:"Sáb 4 jul · Filadelfia",  rh:null, ra:null, nota:""},
-    {id:"m3", home:"MEX", away:"ENG", fecha:"Dom 5 jul 18:00 · Azteca", rh:null, ra:null, nota:""},
-    {id:"m4", home:"BRA", away:"NOR", fecha:"Dom 5 jul 14:00 · NY",     rh:null, ra:null, nota:""},
-    {id:"m5", home:"POR", away:"ESP", fecha:"Lun 6 jul 13:00 · Dallas", rh:null, ra:null, nota:""},
-    {id:"m6", home:"USA", away:"BEL", fecha:"Lun 6 jul · Seattle",      rh:null, ra:null, nota:""},
-    {id:"m7", home:"ARG", away:"EGY", fecha:"Mar 7 jul · Atlanta", rh:null, ra:null, nota:"ARG venció 3-2 a CPV en tiempo extra; EGY eliminó a AUS en penales"},
-    {id:"m8", home:"SUI", away:"COL", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"COL venció 1-0 a GHA y es el rival de SUI"}
+    {id:"m1", fase:"octavos", home:"CAN", away:"MAR", fecha:"Sáb 4 jul · Houston",     rh:null, ra:null, nota:""},
+    {id:"m2", fase:"octavos", home:"PAR", away:"FRA", fecha:"Sáb 4 jul · Filadelfia",  rh:null, ra:null, nota:""},
+    {id:"m3", fase:"octavos", home:"MEX", away:"ENG", fecha:"Dom 5 jul 18:00 · Azteca", rh:null, ra:null, nota:""},
+    {id:"m4", fase:"octavos", home:"BRA", away:"NOR", fecha:"Dom 5 jul 14:00 · NY",     rh:null, ra:null, nota:""},
+    {id:"m5", fase:"octavos", home:"POR", away:"ESP", fecha:"Lun 6 jul 13:00 · Dallas", rh:null, ra:null, nota:""},
+    {id:"m6", fase:"octavos", home:"USA", away:"BEL", fecha:"Lun 6 jul · Seattle",      rh:null, ra:null, nota:""},
+    {id:"m7", fase:"octavos", home:"ARG", away:"EGY", fecha:"Mar 7 jul · Atlanta", rh:null, ra:null, nota:"ARG venció 3-2 a CPV en tiempo extra; EGY eliminó a AUS en penales"},
+    {id:"m8", fase:"octavos", home:"SUI", away:"COL", fecha:"Mar 7 jul · Vancouver", rh:null, ra:null, nota:"SUI eliminó a COL en penales tras el 0-0 a los 120'"},
+    {id:"c1", fase:"cuartos", home:"MAR", away:"FRA", fecha:"Jue 9 jul · Boston",        rh:null, ra:null, sellado:false, nota:""},
+    {id:"c2", fase:"cuartos", home:"ENG", away:"NOR", fecha:"Vie 10 jul · Los Ángeles",  rh:null, ra:null, sellado:false, nota:""},
+    {id:"c3", fase:"cuartos", home:"ESP", away:"BEL", fecha:"Sáb 11 jul · Kansas City",  rh:null, ra:null, sellado:false, nota:""},
+    {id:"c4", fase:"cuartos", home:"ARG", away:"SUI", fecha:"Sáb 11 jul · Miami",        rh:null, ra:null, sellado:false, nota:""}
   ],
   picks:{} /* picks[playerId][matchId] = {res:'1'|'X'|'2'|null, h:null, a:null} */
 };
@@ -355,14 +373,33 @@ window.addEventListener("beforeunload", e=>{
   if(hayCambios){ e.preventDefault(); e.returnValue = ""; }
 });
 
+/* ============== fases (pestañas) ============== */
+let faseActiva = "cuartos";
+function faseDe(m){ return m.fase || "octavos"; }
+function partidosDe(fase){ return S.matches.filter(m => faseDe(m)===fase); }
+function setFase(f){
+  faseActiva = f;
+  document.getElementById("tab-cuartos").classList.toggle("on", f==="cuartos");
+  document.getElementById("tab-octavos").classList.toggle("on", f==="octavos");
+  renderMatriz(); renderCierre();
+}
+
 /* ============== cierre de pronósticos ============== */
-/* El cierre por horario ya no aplica: cada fila tiene su candado 🔒 y los partidos
-   con resultado capturado se bloquean solos. */
+/* Un partido se bloquea solo cuando ya tiene resultado capturado, o cuando el
+   organizador lo sella (campo "sellado" en partidos.json). */
 function cerrado(){ return false; }
+function partidoBloqueado(m){ return !!resultadoReal(m) || !!m.sellado; }
 function renderCierre(){
   const el = document.getElementById("aviso-cierre");
   if(!el) return;
-  el.innerHTML = "🔒 <b>Quedaron selladas las filas</b>, sin cambios.";
+  if(faseActiva==="octavos"){
+    el.innerHTML = "📜 <b>Octavos terminados</b>: esto queda como historial, ya no se puede cambiar.";
+  } else {
+    const abiertos = partidosDe("cuartos").some(m => !partidoBloqueado(m));
+    el.innerHTML = abiertos
+      ? "✍️ <b>Cuartos de final abiertos</b>: llena tus pronósticos y presiona 💾 Guardar antes de que empiecen los partidos."
+      : "🔒 <b>Quedaron sellados los cuartos</b>, sin cambios.";
+  }
 }
 
 /* ============== cálculo de puntos ============== */
@@ -405,7 +442,7 @@ function render(){
 }
 
 /* ============== esquema / camino a la final ============== */
-function ganadorOctavos(m){
+function ganadorPartido(m){
   const rr = resultadoReal(m);
   if(rr==="1") return m.home==="TBD" ? null : m.home;
   if(rr==="2") return m.away==="TBD" ? null : m.away;
@@ -427,20 +464,25 @@ function calculaBracket(){
     const a = S.avanza[x.id];
     return (a && (a===x.home || a===x.away)) ? a : null;
   };
-  const w = S.matches.map(ganadorOctavos);
-  const cuartos = [
-    {id:"c1", home:w[0], away:w[1]}, {id:"c2", home:w[2], away:w[3]},
-    {id:"c3", home:w[4], away:w[5]}, {id:"c4", home:w[6], away:w[7]},
-  ];
-  const gc = cuartos.map(validaAvanza);
+  const oct = partidosDe("octavos");
+  const w = oct.map(ganadorPartido);
+  /* los cuartos son partidos reales (partidos.json); si un cliente viejo aún no
+     los tiene, se arman al vuelo con los ganadores de octavos */
+  let cuartos = partidosDe("cuartos");
+  if(cuartos.length!==4){
+    cuartos = [
+      {id:"c1", home:w[0], away:w[1], rh:null, ra:null}, {id:"c2", home:w[2], away:w[3], rh:null, ra:null},
+      {id:"c3", home:w[4], away:w[5], rh:null, ra:null}, {id:"c4", home:w[6], away:w[7], rh:null, ra:null},
+    ];
+  }
+  const gc = cuartos.map(ganadorPartido);
   const semis = [ {id:"s1", home:gc[0], away:gc[1]}, {id:"s2", home:gc[2], away:gc[3]} ];
   const gs = semis.map(validaAvanza);
   const final = {id:"f1", home:gs[0], away:gs[1]};
-  return {cuartos, gc, semis, gs, final, campeon: validaAvanza(final)};
+  return {oct, cuartos, gc, semis, gs, final, campeon: validaAvanza(final)};
 }
 function renderBracket(){
-  const M = S.matches;
-  const {cuartos, gc, semis, gs, final, campeon} = calculaBracket();
+  const {oct, cuartos, semis, gs, final, campeon} = calculaBracket();
 
   const equipoBtn = (slot, code, gan, activo) => {
     const cls = "br-team" + (gan ? (gan===code ? " gano" : " fuera") : "");
@@ -449,22 +491,23 @@ function renderBracket(){
       ${hay ? bandera(code) : `<span class="bandera-img tbd-flag">?</span>`}
       <span>${hay ? esc(nombre(code)) : "Por definir"}</span></button>`;
   };
-  const octCard = m => {
-    const gan = ganadorOctavos(m), esEmpate = resultadoReal(m)==="X";
+  /* partido real: avanza solo con el marcador; si empató, se toca al ganador de penales */
+  const realCard = m => {
+    const gan = ganadorPartido(m), esEmpate = resultadoReal(m)==="X";
     return `<div class="br-match">${equipoBtn(m.id, m.home, gan, esEmpate)}${equipoBtn(m.id, m.away, gan, esEmpate)}</div>`;
   };
   const card = (x, gan) =>
     `<div class="br-match">${equipoBtn(x.id, x.home, gan, true)}${equipoBtn(x.id, x.away, gan, true)}</div>`;
 
   document.getElementById("bracket").innerHTML = `
-    <div class="br-col"><div class="br-tag">Octavos</div>${M.slice(0,4).map(octCard).join("")}</div>
-    <div class="br-col"><div class="br-tag">Cuartos</div>${card(cuartos[0],gc[0])}${card(cuartos[1],gc[1])}</div>
+    <div class="br-col"><div class="br-tag">Octavos</div>${oct.slice(0,4).map(realCard).join("")}</div>
+    <div class="br-col"><div class="br-tag">Cuartos</div>${realCard(cuartos[0])}${realCard(cuartos[1])}</div>
     <div class="br-col"><div class="br-tag">Semifinal</div>${card(semis[0],gs[0])}</div>
     <div class="br-col"><div class="br-tag">Final</div>${card(final,campeon)}
       <div class="campeon"><span class="copa">🏆</span><span class="nom-camp">${campeon ? esc(nombre(campeon)) : "—"}</span></div></div>
     <div class="br-col"><div class="br-tag">Semifinal</div>${card(semis[1],gs[1])}</div>
-    <div class="br-col"><div class="br-tag">Cuartos</div>${card(cuartos[2],gc[2])}${card(cuartos[3],gc[3])}</div>
-    <div class="br-col"><div class="br-tag">Octavos</div>${M.slice(4).map(octCard).join("")}</div>`;
+    <div class="br-col"><div class="br-tag">Cuartos</div>${realCard(cuartos[2])}${realCard(cuartos[3])}</div>
+    <div class="br-col"><div class="br-tag">Octavos</div>${oct.slice(4).map(realCard).join("")}</div>`;
 }
 
 function renderStandings(){
@@ -482,18 +525,20 @@ function renderStandings(){
 }
 
 function renderMatriz(){
+  const partidos = partidosDe(faseActiva);
   const head = document.getElementById("matriz-head");
-  head.innerHTML = `<th>Jugador</th>` + S.matches.map(m=>
+  head.innerHTML = `<th>Jugador</th>` + partidos.map(m=>
     `<th><span class="mini-b">${bandera(m.home,true)}<i class="mini-vs">vs</i>${bandera(m.away,true)}</span>${esc(nombre(m.home))}<br>${esc(nombre(m.away))}</th>`
   ).join("");
 
   const body = document.getElementById("matriz-body");
   body.innerHTML = S.players.map(p=>{
     const lock = (cerrado() || p.lock) ? "disabled" : "";
-    const celdas = S.matches.map(m=>{
+    const celdas = partidos.map(m=>{
       const pk = (S.picks[p.id]||{})[m.id] || {res:null,h:null,a:null};
       const rr = resultadoReal(m);
-      const lockM = rr ? "disabled" : lock;  /* partido ya jugado: nadie puede cambiar su pick */
+      /* jugado o sellado: nadie puede cambiar su pick; abierto: todos pueden llenar */
+      const lockM = partidoBloqueado(m) ? "disabled" : "";
       const clasePick = v => {
         let c = "pick" + (pk.res===v ? " on":"");
         if(rr && pk.res===v) c += (v===rr ? " hit" : " miss");
@@ -529,7 +574,7 @@ function renderMatriz(){
               title="Tu favorito para campeón del Mundial: +5 puntos si gana">
         <option value="">🏆 Favorito…</option>${opcionesFav}
       </select></td>${celdas}</tr>`;
-  }).join("") || `<tr><td colspan="${S.matches.length+1}" style="color:var(--cal-dim)">Sin jugadores todavía — dale a "+ Agregar jugador"</td></tr>`;
+  }).join("") || `<tr><td colspan="${partidos.length+1}" style="color:var(--cal-dim)">Sin jugadores todavía — dale a "+ Agregar jugador"</td></tr>`;
 }
 
 /* ============== acciones ============== */
@@ -545,16 +590,14 @@ function bloqueado(pid){
   return cerrado() || !!(p && p.lock);
 }
 function setPick(pid, mid, v){
-  if(bloqueado(pid)) return;
-  if(resultadoReal(S.matches.find(x=>x.id===mid))) return;  /* partido ya jugado */
+  if(partidoBloqueado(S.matches.find(x=>x.id===mid))) return;  /* jugado o sellado */
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk.res = (pk.res===v) ? null : v;   /* volver a tocar el mismo lo des-selecciona */
   render();
 }
 function setPickScore(pid, mid, campo, v){
-  if(bloqueado(pid)) return;
-  if(resultadoReal(S.matches.find(x=>x.id===mid))) return;  /* partido ya jugado */
+  if(partidoBloqueado(S.matches.find(x=>x.id===mid))) return;  /* jugado o sellado */
   S.picks[pid] = S.picks[pid]||{};
   const pk = S.picks[pid][mid] = S.picks[pid][mid]||{res:null,h:null,a:null};
   pk[campo] = v==="" ? null : Math.max(0, Math.min(99, parseInt(v)||0));
@@ -598,7 +641,7 @@ function exportar(){
       windowWidth: tabla.scrollWidth + 60
     }).then(canvas=>{
       const a = document.createElement("a");
-      a.download = "pronosticos-octavos-2026.png";
+      a.download = `pronosticos-${faseActiva}-2026.png`;
       a.href = canvas.toDataURL("image/png");
       a.click();
     });

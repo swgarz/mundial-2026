@@ -31,7 +31,11 @@ jobs:
                       vivos[pid].update(pdata)
                   else:
                       datos['players'].append({'id': pid, **pdata})
-              datos.setdefault('picks', {}).update(bloq['picks'])
+              # partido por partido: restaura los picks congelados (octavos) sin
+              # borrar los pronósticos nuevos de fases abiertas (cuartos, etc.)
+              picks = datos.setdefault('picks', {})
+              for pid, pk in bloq['picks'].items():
+                  picks.setdefault(pid, {}).update(pk)
           if json.dumps(datos, sort_keys=True) != antes:
               json.dump(datos, open('datos.json', 'w', encoding='utf-8'), ensure_ascii=False, indent=2)
               print('datos.json corregido (partidos oficiales y jugadores congelados)')

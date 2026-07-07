@@ -1,6 +1,7 @@
 [
   {
     "id": "m1",
+    "fase": "octavos",
     "home": "CAN",
     "away": "MAR",
     "fecha": "Sáb 4 jul · Houston",
@@ -10,6 +11,7 @@
   },
   {
     "id": "m2",
+    "fase": "octavos",
     "home": "PAR",
     "away": "FRA",
     "fecha": "Sáb 4 jul · Filadelfia",
@@ -19,6 +21,7 @@
   },
   {
     "id": "m3",
+    "fase": "octavos",
     "home": "MEX",
     "away": "ENG",
     "fecha": "Dom 5 jul 18:00 · Azteca",
@@ -28,6 +31,7 @@
   },
   {
     "id": "m4",
+    "fase": "octavos",
     "home": "BRA",
     "away": "NOR",
     "fecha": "Dom 5 jul 14:00 · NY",
@@ -37,6 +41,7 @@
   },
   {
     "id": "m5",
+    "fase": "octavos",
     "home": "POR",
     "away": "ESP",
     "fecha": "Lun 6 jul 13:00 · Dallas",
@@ -46,6 +51,7 @@
   },
   {
     "id": "m6",
+    "fase": "octavos",
     "home": "USA",
     "away": "BEL",
     "fecha": "Lun 6 jul · Seattle",
@@ -55,6 +61,7 @@
   },
   {
     "id": "m7",
+    "fase": "octavos",
     "home": "ARG",
     "away": "EGY",
     "fecha": "Mar 7 jul · Atlanta",
@@ -64,11 +71,56 @@
   },
   {
     "id": "m8",
+    "fase": "octavos",
     "home": "SUI",
     "away": "COL",
     "fecha": "Mar 7 jul · Vancouver",
     "rh": 0,
     "ra": 0,
     "nota": "SUI eliminó a COL en penales tras el 0-0 a los 120'"
+  },
+  {
+    "id": "c1",
+    "fase": "cuartos",
+    "home": "MAR",
+    "away": "FRA",
+    "fecha": "Jue 9 jul · Boston",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": ""
+  },
+  {
+    "id": "c2",
+    "fase": "cuartos",
+    "home": "ENG",
+    "away": "NOR",
+    "fecha": "Vie 10 jul · Los Ángeles",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": ""
+  },
+  {
+    "id": "c3",
+    "fase": "cuartos",
+    "home": "ESP",
+    "away": "BEL",
+    "fecha": "Sáb 11 jul · Kansas City",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": ""
+  },
+  {
+    "id": "c4",
+    "fase": "cuartos",
+    "home": "ARG",
+    "away": "SUI",
+    "fecha": "Sáb 11 jul · Miami",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": ""
   }
 ]
