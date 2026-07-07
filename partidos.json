@@ -49,8 +49,8 @@
     "home": "USA",
     "away": "BEL",
     "fecha": "Lun 6 jul · Seattle",
-    "rh": null,
-    "ra": null,
+    "rh": 1,
+    "ra": 4,
     "nota": ""
   },
   {
