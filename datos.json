@@ -172,8 +172,8 @@
       "home": "MAR",
       "away": "FRA",
       "fecha": "Jue 9 jul · Boston",
-      "rh": null,
-      "ra": null,
+      "rh": 0,
+      "ra": 2,
       "sellado": false,
       "nota": "",
       "selladoPara": [
