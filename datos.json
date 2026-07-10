@@ -226,8 +226,8 @@
       "home": "ESP",
       "away": "BEL",
       "fecha": "Sáb 11 jul · Kansas City",
-      "rh": null,
-      "ra": null,
+      "rh": 2,
+      "ra": 1,
       "sellado": false,
       "nota": "",
       "selladoPara": [
