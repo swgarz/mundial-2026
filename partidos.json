@@ -166,8 +166,8 @@
     "home": "ARG",
     "away": "SUI",
     "fecha": "Sáb 11 jul · Miami",
-    "rh": null,
-    "ra": null,
+    "rh": 3,
+    "ra": 1,
     "sellado": false,
     "nota": "",
     "selladoPara": [
