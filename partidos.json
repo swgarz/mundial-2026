@@ -112,8 +112,8 @@
     "home": "ENG",
     "away": "NOR",
     "fecha": "Vie 10 jul · Los Ángeles",
-    "rh": null,
-    "ra": null,
+    "rh": 2,
+    "ra": 1,
     "sellado": false,
     "nota": "",
     "selladoPara": [
