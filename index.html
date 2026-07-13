@@ -84,9 +84,10 @@
   .real .guion{ font-family:'Anton'; font-size:22px; margin:0 8px; color:var(--cal-dim) }
 
   /* ---------- matriz de pronósticos ---------- */
-  .scroll{ overflow-x:auto; border:2px solid var(--cal); border-radius:10px; background:var(--pizarra);
+  .scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; border:2px solid var(--cal); border-radius:10px; background:var(--pizarra);
            width:calc(100vw - 28px); margin-left:calc(50% - 50vw + 14px); }
-  table.matriz{ border-collapse:collapse; min-width:900px; width:100% }
+  table.matriz{ border-collapse:collapse; width:100% }
+  .matriz thead th:not(:first-child){ min-width:150px }
   .matriz th, .matriz td{ border-bottom:1.5px solid rgba(242,247,244,.35); border-right:1.5px solid rgba(242,247,244,.3);
                           padding:8px; text-align:center; }
   .matriz thead th{ font-size:11px; color:var(--cal-dim); font-weight:600; padding:10px 8px;
@@ -137,7 +138,7 @@
   .tab-fase.on{ background:var(--oro); border-color:var(--oro); color:#1e1602 }
 
   /* ---------- esquema / camino a la final ---------- */
-  .scroll-bracket{ overflow-x:auto; padding-bottom:6px }
+  .scroll-bracket{ overflow-x:auto; -webkit-overflow-scrolling:touch; padding-bottom:6px }
   .bracket{ display:grid; grid-template-columns:repeat(7,1fr); gap:10px; min-width:1000px; align-items:stretch }
   .br-col{ display:flex; flex-direction:column; justify-content:space-around; gap:10px }
   .br-tag{ font-size:10px; letter-spacing:.16em; text-transform:uppercase; color:var(--cal-dim); text-align:center }
@@ -171,6 +172,19 @@
   @media (max-width:640px){
     .wrap{ padding:16px 10px 60px }
     .tabla-pos td, .tabla-pos th{ padding:8px 10px }
+    /* la matriz compacta: las semifinales (2 partidos) caben completas en la
+       pantalla del celular; con más columnas (historial) se desliza al tacto */
+    .scroll{ width:calc(100vw - 20px); margin-left:calc(50% - 50vw + 10px) }
+    .matriz td:first-child, .matriz th:first-child{ min-width:112px }
+    .matriz thead th:not(:first-child){ min-width:116px }
+    .matriz th, .matriz td{ padding:6px 4px }
+    .jug-nom input{ width:78px; font-size:13px }
+    .fav-sel{ width:100px }
+    .pick{ min-width:31px; padding:0 3px; font-size:10.5px }
+    /* 16px evita que iOS haga zoom solo al tocar el campo de goles */
+    .mini-marcador input{ width:30px; font-size:16px }
+    .mini-marcador::before{ width:12px }
+    .mini-marcador .star{ width:12px; font-size:12px }
   }
   :focus-visible{ outline:2px solid var(--oro); outline-offset:2px }
 </style>
