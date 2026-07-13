@@ -186,5 +186,29 @@
       "p1783025284025",
       "p1783184204610"
     ]
+  },
+  {
+    "id": "s1",
+    "fase": "semis",
+    "home": "FRA",
+    "away": "ESP",
+    "fecha": "Mar 14 jul · Dallas",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": "",
+    "selladoPara": []
+  },
+  {
+    "id": "s2",
+    "fase": "semis",
+    "home": "ENG",
+    "away": "ARG",
+    "fecha": "Mié 15 jul · Atlanta",
+    "rh": null,
+    "ra": null,
+    "sellado": false,
+    "nota": "",
+    "selladoPara": []
   }
 ]
