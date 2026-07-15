@@ -193,8 +193,8 @@
     "home": "FRA",
     "away": "ESP",
     "fecha": "Mar 14 jul · Dallas",
-    "rh": null,
-    "ra": null,
+    "rh": 0,
+    "ra": 2,
     "sellado": false,
     "nota": "",
     "selladoPara": [
