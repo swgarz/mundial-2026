@@ -220,8 +220,8 @@
     "home": "ENG",
     "away": "ARG",
     "fecha": "Mié 15 jul · Atlanta",
-    "rh": null,
-    "ra": null,
+    "rh": 1,
+    "ra": 2,
     "sellado": false,
     "nota": "",
     "selladoPara": [
