@@ -327,6 +327,30 @@
         "p1783040200191",
         "p1783113374772"
       ]
+    },
+    {
+      "id": "t1",
+      "fase": "finales",
+      "home": "FRA",
+      "away": "ENG",
+      "fecha": "Sáb 18 jul · Miami",
+      "rh": null,
+      "ra": null,
+      "sellado": false,
+      "nota": "Partido por el 3er lugar",
+      "selladoPara": []
+    },
+    {
+      "id": "f1",
+      "fase": "finales",
+      "home": "ESP",
+      "away": "ARG",
+      "fecha": "Dom 19 jul · Nueva York",
+      "rh": null,
+      "ra": null,
+      "sellado": false,
+      "nota": "🏆 Final",
+      "selladoPara": []
     }
   ],
   "picks": {

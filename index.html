@@ -221,14 +221,14 @@
   <h2>FIFA 2026</h2>
   <div class="scroll-bracket"><div class="bracket" id="bracket"></div></div>
   <p class="nota">Los ganadores van avanzando hacia el centro hasta llegar a la final 🏆.<br>
-     · Los de <b>octavos, cuartos y semifinales</b> avanzan solos cuando se captura el marcador real. Si terminó empatado,
-       toca aquí al equipo que ganó en <b>penales</b> para que avance.<br>
-     · En la <b>final</b>, toca al equipo que haya ganado para coronarlo campeón
+     · Todos los partidos (incluidos el <b>3er lugar</b> y la <b>final</b>) avanzan solos cuando se captura el marcador real.
+       Si terminó empatado, toca aquí al equipo que ganó en <b>penales</b> para que avance
        (tócalo de nuevo si te equivocaste).</p>
 
   <h2>Pronósticos</h2>
   <div class="tabs-fase" id="tabs-fase">
-    <button class="tab-fase on" id="tab-semis" onclick="setFase('semis')">⚽ Semifinales</button>
+    <button class="tab-fase on" id="tab-finales" onclick="setFase('finales')">🏆 Finales</button>
+    <button class="tab-fase" id="tab-semis" onclick="setFase('semis')">📜 Semifinales · historial</button>
     <button class="tab-fase" id="tab-cuartos" onclick="setFase('cuartos')">📜 Cuartos · historial</button>
     <button class="tab-fase" id="tab-octavos" onclick="setFase('octavos')">📜 Octavos · historial</button>
   </div>
@@ -242,8 +242,9 @@
     <button class="btn" onclick="exportar()">Descargar imagen</button>
   </div>
   <p class="nota"><b>¿Cómo funciona?</b> Muy fácil:<br>
-     · Arriba están las <b>pestañas por fase</b>: en <b>⚽ Semifinales</b> llenas tus nuevos pronósticos,
-       y en <b>📜 Cuartos</b> y <b>📜 Octavos</b> queda el historial de lo que ya se jugó (con sus puntos ya contados).<br>
+     · Arriba están las <b>pestañas por fase</b>: en <b>🏆 Finales</b> llenas tus pronósticos del
+       <b>3er lugar</b> y de la <b>final</b>, y en <b>📜 Semifinales</b>, <b>📜 Cuartos</b> y <b>📜 Octavos</b>
+       queda el historial de lo que ya se jugó (con sus puntos ya contados).<br>
      · Presiona el botón con las <b>siglas del equipo</b> que crees que va a ganar (por ejemplo <b>MEX</b> o <b>ENG</b>),
        o <b>EMP</b> si crees que van a empatar (el empate cuenta con el marcador a los <b>120 minutos</b>).<br>
      · Abajo puedes escribir los <b>goles</b> que crees que meterá cada equipo (marcador exacto a los 120').<br>
@@ -289,7 +290,9 @@ const ESTADO_INICIAL = {
     {id:"c3", fase:"cuartos", home:"ESP", away:"BEL", fecha:"Sáb 11 jul · Kansas City",  rh:null, ra:null, sellado:false, selladoPara:["p1783024145197","p1783040200191","p1783101934027","p1783025278966","p1783117035825","p1783183269306","p1783199000071","p1783040188581","p1783040195213","p1783025322972","p1783113374772","p1783025310967","p1783025284025","p1783184204610"], nota:""},
     {id:"c4", fase:"cuartos", home:"ARG", away:"SUI", fecha:"Sáb 11 jul · Miami",        rh:null, ra:null, sellado:false, selladoPara:["p1783024145197","p1783040200191","p1783101934027","p1783025278966","p1783117035825","p1783183269306","p1783199000071","p1783040188581","p1783040195213","p1783025322972","p1783113374772","p1783025310967","p1783025284025","p1783184204610"], nota:""},
     {id:"s1", fase:"semis", home:"FRA", away:"ESP", fecha:"Mar 14 jul · Dallas",   rh:null, ra:null, sellado:false, selladoPara:["p1783024145197","p1783025278966","p1783025284025","p1783025310967","p1783025322972","p1783040188581","p1783040195213","p1783101934027","p1783117035825","p1783183269306","p1783184204610","p1783199000071","p1783040200191","p1783113374772"], nota:""},
-    {id:"s2", fase:"semis", home:"ENG", away:"ARG", fecha:"Mié 15 jul · Atlanta",  rh:null, ra:null, sellado:false, selladoPara:["p1783024145197","p1783025278966","p1783025284025","p1783025310967","p1783025322972","p1783040188581","p1783040195213","p1783101934027","p1783117035825","p1783183269306","p1783184204610","p1783199000071","p1783040200191","p1783113374772"], nota:""}
+    {id:"s2", fase:"semis", home:"ENG", away:"ARG", fecha:"Mié 15 jul · Atlanta",  rh:null, ra:null, sellado:false, selladoPara:["p1783024145197","p1783025278966","p1783025284025","p1783025310967","p1783025322972","p1783040188581","p1783040195213","p1783101934027","p1783117035825","p1783183269306","p1783184204610","p1783199000071","p1783040200191","p1783113374772"], nota:""},
+    {id:"t1", fase:"finales", home:"FRA", away:"ENG", fecha:"Sáb 18 jul · Miami",       rh:null, ra:null, sellado:false, selladoPara:[], nota:"Partido por el 3er lugar"},
+    {id:"f1", fase:"finales", home:"ESP", away:"ARG", fecha:"Dom 19 jul · Nueva York",  rh:null, ra:null, sellado:false, selladoPara:[], nota:"🏆 Final"}
   ],
   picks:{} /* picks[playerId][matchId] = {res:'1'|'X'|'2'|null, h:null, a:null} */
 };
@@ -391,11 +394,12 @@ window.addEventListener("beforeunload", e=>{
 });
 
 /* ============== fases (pestañas) ============== */
-let faseActiva = "semis";
+let faseActiva = "finales";
 function faseDe(m){ return m.fase || "octavos"; }
 function partidosDe(fase){ return S.matches.filter(m => faseDe(m)===fase); }
 function setFase(f){
   faseActiva = f;
+  document.getElementById("tab-finales").classList.toggle("on", f==="finales");
   document.getElementById("tab-semis").classList.toggle("on", f==="semis");
   document.getElementById("tab-cuartos").classList.toggle("on", f==="cuartos");
   document.getElementById("tab-octavos").classList.toggle("on", f==="octavos");
@@ -417,11 +421,13 @@ function renderCierre(){
     el.innerHTML = "📜 <b>Octavos terminados</b>: esto queda como historial, ya no se puede cambiar.";
   } else if(faseActiva==="cuartos"){
     el.innerHTML = "📜 <b>Cuartos terminados</b>: esto queda como historial, ya no se puede cambiar.";
+  } else if(faseActiva==="semis"){
+    el.innerHTML = "📜 <b>Semifinales terminadas</b>: esto queda como historial, ya no se puede cambiar.";
   } else {
-    const abiertos = partidosDe("semis").some(m => !partidoBloqueado(m));
+    const abiertos = partidosDe("finales").some(m => !partidoBloqueado(m));
     el.innerHTML = abiertos
-      ? "✍️ <b>Semifinales abiertas</b>: llena tus pronósticos y presiona 💾 Guardar antes de que empiecen los partidos."
-      : "🔒 <b>Quedaron selladas las semifinales</b>, sin cambios.";
+      ? "✍️ <b>3er lugar y final abiertos</b>: llena tus pronósticos y presiona 💾 Guardar antes de que empiecen los partidos."
+      : "🔒 <b>Quedaron sellados el 3er lugar y la final</b>, sin cambios.";
   }
 }
 
@@ -506,11 +512,17 @@ function calculaBracket(){
     semis = [ {id:"s1", home:gc[0], away:gc[2], rh:null, ra:null}, {id:"s2", home:gc[1], away:gc[3], rh:null, ra:null} ];
   }
   const gs = semis.map(ganadorPartido);
-  const final = {id:"f1", home:gs[0], away:gs[1]};
-  return {oct, cuartos, gc, semis, gs, final, campeon: validaAvanza(final)};
+  /* la final y el 3er lugar ya son partidos reales (ESP–ARG y FRA–ENG); si un
+     cliente viejo no los tiene, la final se arma con los ganadores de semis */
+  const finales = partidosDe("finales");
+  const finalReal = finales.find(m => m.id==="f1");
+  const tercero = finales.find(m => m.id==="t1") || null;
+  const final = finalReal || {id:"f1", home:gs[0], away:gs[1]};
+  const campeon = finalReal ? ganadorPartido(finalReal) : validaAvanza(final);
+  return {oct, cuartos, gc, semis, gs, final, finalReal:!!finalReal, tercero, campeon};
 }
 function renderBracket(){
-  const {oct, cuartos, semis, gs, final, campeon} = calculaBracket();
+  const {oct, cuartos, semis, gs, final, finalReal, tercero, campeon} = calculaBracket();
 
   const equipoBtn = (slot, code, gan, activo) => {
     const cls = "br-team" + (gan ? (gan===code ? " gano" : " fuera") : "");
@@ -531,8 +543,9 @@ function renderBracket(){
     <div class="br-col"><div class="br-tag">Octavos</div>${oct.slice(0,4).map(realCard).join("")}</div>
     <div class="br-col"><div class="br-tag">Cuartos</div>${realCard(cuartos[0])}${realCard(cuartos[1])}</div>
     <div class="br-col"><div class="br-tag">Semifinal</div>${realCard(semis[0])}</div>
-    <div class="br-col"><div class="br-tag">Final</div>${card(final,campeon)}
-      <div class="campeon"><span class="copa">🏆</span><span class="nom-camp">${campeon ? esc(nombre(campeon)) : "—"}</span></div></div>
+    <div class="br-col"><div class="br-tag">Final</div>${finalReal ? realCard(final) : card(final,campeon)}
+      <div class="campeon"><span class="copa">🏆</span><span class="nom-camp">${campeon ? esc(nombre(campeon)) : "—"}</span></div>
+      ${tercero ? `<div class="br-tag">3er lugar</div>${realCard(tercero)}` : ""}</div>
     <div class="br-col"><div class="br-tag">Semifinal</div>${realCard(semis[1])}</div>
     <div class="br-col"><div class="br-tag">Cuartos</div>${realCard(cuartos[2])}${realCard(cuartos[3])}</div>
     <div class="br-col"><div class="br-tag">Octavos</div>${oct.slice(4).map(realCard).join("")}</div>`;
