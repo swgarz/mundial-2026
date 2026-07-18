@@ -338,7 +338,10 @@
       "ra": null,
       "sellado": false,
       "nota": "Partido por el 3er lugar",
-      "selladoPara": []
+      "selladoPara": [
+        "p1783199000071",
+        "p1783040195213"
+      ]
     },
     {
       "id": "f1",
@@ -350,7 +353,10 @@
       "ra": null,
       "sellado": false,
       "nota": "🏆 Final",
-      "selladoPara": []
+      "selladoPara": [
+        "p1783199000071",
+        "p1783040195213"
+      ]
     }
   ],
   "picks": {
