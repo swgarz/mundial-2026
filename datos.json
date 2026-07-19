@@ -361,8 +361,8 @@
       "home": "ESP",
       "away": "ARG",
       "fecha": "Dom 19 jul · Nueva York",
-      "rh": null,
-      "ra": null,
+      "rh": 1,
+      "ra": 0,
       "sellado": false,
       "nota": "🏆 Final",
       "selladoPara": [
