@@ -247,8 +247,8 @@
     "home": "FRA",
     "away": "ENG",
     "fecha": "Sáb 18 jul · Miami",
-    "rh": null,
-    "ra": null,
+    "rh": 4,
+    "ra": 6,
     "sellado": false,
     "nota": "Partido por el 3er lugar",
     "selladoPara": [
