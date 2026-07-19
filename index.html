@@ -331,19 +331,44 @@ function marcarGuardado(){
   if(btn){ btn.textContent = "✓ Guardado"; btn.classList.remove("pendiente"); btn.disabled = false; }
 }
 
+function avisoCarga(msg){
+  let el = document.getElementById("aviso-carga");
+  if(!msg){ if(el) el.remove(); return; }
+  if(!el){
+    el = document.createElement("div");
+    el.id = "aviso-carga";
+    el.style.cssText = "background:#fde68a;color:#78350f;padding:10px 14px;border-radius:8px;margin:10px 0;font-size:14px;text-align:center";
+    document.body.insertBefore(el, document.body.firstChild);
+  }
+  el.textContent = msg;
+}
+
+function aplicaDatos(d){
+  if(!(d && d.players && d.matches)) return false;
+  cargando = true;
+  S = d; render();
+  cargando = false;
+  marcarGuardado();
+  avisoCarga(null);
+  return true;
+}
+
 async function cargarNube(){
+  // 1) la API de GitHub: siempre trae lo más reciente, pero sin token se limita a 60 peticiones/hora por IP
   try{
     const r = await fetch(`https://api.github.com/repos/${REPO}/contents/${ARCHIVO}?t=${Date.now()}`,
       {headers:{Accept:"application/vnd.github.raw+json"}, cache:"no-store"});
-    if(!r.ok) return;
-    const d = await r.json();
-    if(d && d.players && d.matches){
-      cargando = true;
-      S = d; render();
-      cargando = false;
-      marcarGuardado();
+    if(r.ok && aplicaDatos(await r.json())) return;
+  }catch(e){}
+  // 2) plan B: el datos.json publicado en el sitio (puede ir un deploy atrás, pero es mejor que nada)
+  try{
+    const r = await fetch(`${ARCHIVO}?t=${Date.now()}`, {cache:"no-store"});
+    if(r.ok && aplicaDatos(await r.json())){
+      avisoCarga("Mostrando la copia publicada del sitio. Si algo se ve viejo, recarga en un rato.");
+      return;
     }
   }catch(e){}
+  avisoCarga("No se pudieron cargar los datos más recientes. Estás viendo lo último guardado en este navegador — no guardes cambios hasta que vuelva a cargar.");
 }
 
 async function guardarNube(){
